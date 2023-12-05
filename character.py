@@ -1,5 +1,6 @@
 import pyxel
 
+
 class Character:
     def __init__(self, x, y, w, h, sprite_id):
         self.w = w
@@ -11,7 +12,7 @@ class Character:
     @property
     def w(self):
         return self.__w
-    
+
     @property
     def h(self):
         return self.__h
@@ -19,11 +20,11 @@ class Character:
     @property
     def x(self):
         return self.__x
-    
+
     @property
     def y(self):
         return self.__y
-    
+
     @w.setter
     def w(self, w):
         if type(w) is not int:
@@ -67,3 +68,9 @@ class Character:
             self.__y = 0
         else:
             self.__y = y
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pyxel.blt(self.x, self.y, self.sprite_id, 0, 0, self.w, self.h, 0)
