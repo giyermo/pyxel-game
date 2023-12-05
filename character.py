@@ -1,13 +1,15 @@
 import pyxel
 
+pyxel.load("assets/assets1.pyxres")
+
 
 class Character:
-    def __init__(self, x, y, w, h, sprite_id):
+    def __init__(self, x, y, w, h, sprite):
         self.w = w
         self.h = h
         self.x = x
         self.y = y
-        self.sprite_id = sprite_id
+        self.sprite = sprite
 
     @property
     def w(self):
@@ -24,6 +26,10 @@ class Character:
     @property
     def y(self):
         return self.__y
+
+    @property
+    def sprite(self):
+        return self.__sprite
 
     @w.setter
     def w(self, w):
@@ -69,8 +75,19 @@ class Character:
         else:
             self.__y = y
 
+    @sprite.setter
+    def sprite(self, sprite):
+        if type(sprite) is not int:
+            raise TypeError("sprite must be an integer")
+        elif sprite > pyxel.num_tiles:
+            self.__sprite = pyxel.num_tiles - 1
+        elif sprite < 0:
+            self.__sprite = 0
+        else:
+            self.__sprite = sprite
+
     def update(self):
         pass
 
     def draw(self):
-        pyxel.blt(self.x, self.y, self.sprite_id, 0, 0, self.w, self.h, 0)
+        pyxel.blt(self.x, self.y, self.sprite, 0, 0, self.w, self.h, 0)
