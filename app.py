@@ -1,7 +1,7 @@
 import pyxel
 
-WIDTH = 320
-HEIGHT = 240
+WIDTH = 256
+HEIGHT = 208
 
 
 class App:
@@ -16,8 +16,7 @@ class App:
 
     def draw(self):
         pyxel.cls(0)
-        pyxel.blt(WIDTH // 2 - 8, HEIGHT // 2 - 12, 0, 0, 0, 16, 24, colkey=0)
-        pyxel.rect(self.x, 0, 8, 8, 9)
+        pyxel.bltm(0, 0, 0, 0, 128, 256, 208)
 
 
 App()
