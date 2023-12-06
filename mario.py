@@ -49,17 +49,29 @@ class Mario(Character):
                 return
             self.dy = -10
             self.is_jumping = True
-        if self.is_jumping:
+        if self.is_jumping and self.is_falling != True:
             self.dy += 1
             if self.dy > 0:
                 self.is_jumping = False
                 self.dy = 0
-        if pyxel.btnp(pyxel.KEY_Q):
-            pyxel.quit()
+                self.is_falling = True
+        elif self.is_falling:
+            self.dy += 1
+            if self.dy > 3:
+                self.dy = 3
+                self.is_falling = False
+        else:
+            self.dy = 0
         self.x += self.dx
         self.y += self.dy
-        if self.x + self.w > pyxel.width:
+        print(self.x, self.y, self.dx, self.dy,
+              self.direction, self.is_jumping)
+        if self.x + self.w - 1 > pyxel.width:
+            self.x = 0
+        elif self.x <= 0:
             self.x = pyxel.width - self.w
+        if self.y + self.h > pyxel.height-16:
+            self.y = pyxel.height - self.h - 16
 
     def draw(self):
         # u = (2 if self.is_falling else pyxel.frame_count // 3 % 2) * 8
