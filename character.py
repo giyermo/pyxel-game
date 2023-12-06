@@ -1,7 +1,5 @@
 import pyxel
 
-pyxel.load("assets/assets1.pyxres")
-
 
 class Character:
     def __init__(self, x, y, w, h, sprite):
