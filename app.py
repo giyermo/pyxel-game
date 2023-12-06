@@ -1,12 +1,12 @@
 import pyxel
 
-WIDTH = 160
-HEIGHT = 120
+WIDTH = 320
+HEIGHT = 240
 
 
 class App:
     def __init__(self):
-        pyxel.init(320, 240, title="Mario Bros")
+        pyxel.init(WIDTH, HEIGHT, title="Mario Bros")
         pyxel.load("assets/assets1.pyxres")
         self.x = 0
         pyxel.run(self.update, self.draw)
