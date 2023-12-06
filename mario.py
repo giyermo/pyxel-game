@@ -10,54 +10,64 @@ Example of simple use of pyxel. It shows how to write text, how to change its
 """
 
 import pyxel
+from character import Character
 
 # To use pyxel we need to define two functions, one will do all the
 # calculations needed each frame, the other will paint things on the screen
 # They can have any name, but the 'standard' ones are update and draw
 
 
-class Mario:
-    def __init__(self, character) -> None:
-        self.x = x
-        self.y = y
+class Mario(Character):
+    def __init__(self) -> None:
+        super().__init__(x=120, y=168, u=0, v=0, w=16, h=24, sprite=0)
         self.dx = 0
         self.dy = 0
         self.direction = 1
         self.is_falling = False
+        self.is_jumping = False
+        self.is_running = False
+        self.is_dead = False
+        self.is_invincible = False
+        self.invincible_time = 0
 
     def update(self):
-        global scroll_x
-        last_y = self.y
-        if pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT):
+        if self.is_dead:
+            return
+        if pyxel.btn(pyxel.KEY_LEFT):
             self.dx = -2
             self.direction = -1
-        if pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT):
+            self.is_running = True
+        elif pyxel.btn(pyxel.KEY_RIGHT):
             self.dx = 2
             self.direction = 1
-        self.dy = min(self.dy + 1, 3)
-        if pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
-            self.dy = -6
-            pyxel.play(3, 8)
-        self.x, self.y, self.dx, self.dy = push_back(
-            self.x, self.y, self.dx, self.dy)
-        if self.x < scroll_x:
-            self.x = scroll_x
-        if self.y < 0:
-            self.y = 0
-        self.dx = int(self.dx * 0.8)
-        self.is_falling = self.y > last_y
-
-        if self.x > scroll_x + SCROLL_BORDER_X:
-            last_scroll_x = scroll_x
-            scroll_x = min(self.x - SCROLL_BORDER_X, 240 * 8)
-            spawn_enemy(last_scroll_x + 128, scroll_x + 127)
-        if self.y >= pyxel.height:
-            game_over()
+            self.is_running = True
+        else:
+            self.dx = 0
+            self.is_running = False
+        if pyxel.btnp(pyxel.KEY_SPACE):
+            if self.is_jumping:
+                return
+            self.dy = -10
+            self.is_jumping = True
+        if self.is_jumping:
+            self.dy += 1
+            if self.dy > 0:
+                self.is_jumping = False
+                self.dy = 0
+        if pyxel.btnp(pyxel.KEY_Q):
+            pyxel.quit()
+        self.x += self.dx
+        self.y += self.dy
+        if self.x + self.w > pyxel.width:
+            self.x = pyxel.width - self.w
 
     def draw(self):
-        u = (2 if self.is_falling else pyxel.frame_count // 3 % 2) * 8
-        w = 8 if self.direction > 0 else -8
-        pyxel.blt(self.x, self.y, 0, u, 16, w, 8, TRANSPARENT_COLOR)
+        # u = (2 if self.is_falling else pyxel.frame_count // 3 % 2) * 8
+        # w = 8 if self.direction > 0 else -8
+        pyxel.blt(self.x, self.y, self.sprite,
+                  self.u, self.v, 16, 24, colkey=0)
+        # if self.is_invincible:
+        #    pyxel.blt(self.x, self.y, 0, u, 16, w, 8, pyxel.COLOR_RED)
 
 # def update():
 #     ''' This function is executed every frame. Now it only checks if the

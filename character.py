@@ -3,10 +3,12 @@ import pyxel
 
 class Character:
     def __init__(self, x, y, u, v, w, h, sprite=0):
-        self.w = w
-        self.h = h
         self.x = x
         self.y = y
+        self.u = u
+        self.v = v
+        self.w = w
+        self.h = h
         self.sprite = sprite
 
     @property
@@ -41,8 +43,8 @@ class Character:
     def x(self, x):
         if type(x) is not int:
             raise TypeError("x must be an integer")
-        elif x + self.w > pyxel.width:
-            self.__x = pyxel.width - self.w
+        # elif x + self.w > pyxel.width:
+        #     self.__x = pyxel.width - self.w
         elif x < 0:
             self.__x = 0
         else:
@@ -52,8 +54,8 @@ class Character:
     def y(self, y):
         if type(y) is not int:
             raise TypeError("y must be an integer")
-        elif y + self.h > pyxel.height:
-            self.__y = pyxel.height - self.h
+        # elif y + self.h > pyxel.height:
+        #     self.__y = pyxel.height - self.h
         elif y < 0:
             self.__y = 0
         else:
@@ -87,8 +89,8 @@ class Character:
             raise TypeError("w must be an integer")
         elif w > pyxel.width:
             self.__w = pyxel.width
-        elif w < 0:
-            self.__w = 0
+        elif w < -pyxel.width:
+            self.__w = -w
         else:
             self.__w = w
 
@@ -98,8 +100,8 @@ class Character:
             raise TypeError("h must be an integer")
         elif h > pyxel.height:
             self.__h = pyxel.height
-        elif h < 0:
-            self.__h = 0
+        elif h < -pyxel.height:
+            self.__h = -h
         else:
             self.__h = h
 
@@ -107,8 +109,8 @@ class Character:
     def sprite(self, sprite):
         if type(sprite) is not int:
             raise TypeError("sprite must be an integer")
-        elif sprite > pyxel.num_tiles:
-            self.__sprite = pyxel.num_tiles - 1
+        elif sprite > pyxel.width:
+            self.__sprite = pyxel.width
         elif sprite < 0:
             self.__sprite = 0
         else:

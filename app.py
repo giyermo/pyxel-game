@@ -1,4 +1,5 @@
 import pyxel
+from mario import Mario
 
 WIDTH = 256
 HEIGHT = 208
@@ -8,15 +9,17 @@ class App:
     def __init__(self):
         pyxel.init(WIDTH, HEIGHT, title="Mario Bros")
         pyxel.load("assets/assets1.pyxres")
-        self.x = 0
+        global mario
+        mario = Mario()
         pyxel.run(self.update, self.draw)
 
     def update(self):
-        self.x = (self.x + 1) % pyxel.width
+        mario.update()
 
     def draw(self):
         pyxel.cls(0)
         pyxel.bltm(0, 0, 0, 0, 128, 256, 208)
+        mario.draw()
 
 
 App()
