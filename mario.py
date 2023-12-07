@@ -1,20 +1,8 @@
-
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Oct 24 16:39:31 2019
-
-@author: Angel Garcia Olaya PLG-UC3M
-@version: 1.0
-Example of simple use of pyxel. It shows how to write text, how to change its
- color and how to move it
-"""
-
 import pyxel
 from character import Character
 
-# To use pyxel we need to define two functions, one will do all the
-# calculations needed each frame, the other will paint things on the screen
-# They can have any name, but the 'standard' ones are update and draw
+
+td = 8  # tile dimension
 
 
 class Mario(Character):
@@ -61,9 +49,7 @@ class Mario(Character):
             self.dy = 0
         self.x += self.dx
         self.y += self.dy
-        # print(self.x, self.y, self.dx, self.dy,
-        #      self.direction, self.is_jumping)
-        if self.x + self.w - 1 > pyxel.width:
+        if self.x + self.w > pyxel.width:
             self.x = 0
         elif self.x <= 0:
             self.x = pyxel.width - self.w

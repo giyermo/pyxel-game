@@ -1,6 +1,44 @@
 import pyxel
 
 
+td = 8  # tile dimension
+# def get_tile(tile_x, tile_y):
+#     return pyxel.tilemap(0).pget(tile_x, tile_y)
+
+
+# def push_back(x, y, dx, dy):
+#     abs_dx = abs(dx)
+#     abs_dy = abs(dy)
+#     if abs_dx > abs_dy:
+#         sign = 1 if dx > 0 else -1
+#         for _ in range(abs_dx):
+#             if detect_collision(x + sign, y, dy):
+#                 break
+#             x += sign
+#         sign = 1 if dy > 0 else -1
+#         for _ in range(abs_dy):
+#             if detect_collision(x, y + sign, dy):
+#                 break
+#             y += sign
+#     else:
+#         sign = 1 if dy > 0 else -1
+#         for _ in range(abs_dy):
+#             if detect_collision(x, y + sign, dy):
+#                 break
+#             y += sign
+#         sign = 1 if dx > 0 else -1
+#         for _ in range(abs_dx):
+#             if detect_collision(x + sign, y, dy):
+#                 break
+#             x += sign
+#     return x, y, dx, dy
+
+
+# def is_wall(x, y):
+#     tile = get_tile(x // 8, y // 8)
+#     return tile == TILE_FLOOR or tile[0] >= WALL_TILE_X
+
+
 class Character:
     def __init__(self, x, y, u, v, w, h, sprite=0):
         self.x = x
@@ -115,3 +153,14 @@ class Character:
             self.__sprite = 0
         else:
             self.__sprite = sprite
+
+    def detect_collision(self):
+        for yi in range(y1, y2 + 1):
+            for xi in range(x1, x2 + 1):
+                if get_tile(xi, yi)[0] >= WALL_TILE_X:
+                    return True
+        if dy > 0 and y % 8 == 1:
+            for xi in range(x1, x2 + 1):
+                if get_tile(xi, y1 + 1) == TILE_FLOOR:
+                    return True
+        return False

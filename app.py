@@ -2,8 +2,9 @@ import pyxel
 from board import Board
 from mario import Mario
 
-WIDTH = 32*8
-HEIGHT = 28*8
+td = 8  # tile dimension
+WIDTH = 32*td
+HEIGHT = 28*td
 
 
 class App:

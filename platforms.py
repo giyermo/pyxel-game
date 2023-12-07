@@ -1,8 +1,6 @@
 import pyxel
 
-
-WIDTH = 256
-HEIGHT = 200
+td = 8  # tile dimension
 
 
 class Platform:
@@ -11,6 +9,7 @@ class Platform:
         self.y = y
         self.type = type
         self.length = length
+        self.platform_tile_list = []
 
     @property
     def x(self):
@@ -70,16 +69,21 @@ class Platform:
     def draw(self):
         if self.type == 1:
             for i in range(self.length):
-                pyxel.blt(self.x + i * 8, self.y, 0, 0, 224, 8, 8, 0)
+                pyxel.blt(self.x + i * td, self.y, 0, 0, 224, 8, 8, 0)
+                self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 2:
             for i in range(self.length):
-                pyxel.blt(self.x + i * 8, self.y, 0, 0, 8, 8, 8, 0)
+                pyxel.blt(self.x + i * td, self.y, 0, 0, 8, 8, 8, 0)
+                self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 3:
             for i in range(self.length):
-                pyxel.blt(self.x + i * 8, self.y, 0, 0, 16, 8, 8, 0)
+                pyxel.blt(self.x + i * td, self.y, 0, 0, 16, 8, 8, 0)
+                self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 4:
             for i in range(self.length):
-                pyxel.blt(self.x + i * 8, self.y, 0, 0, 24, 8, 8, 0)
+                pyxel.blt(self.x + i * td, self.y, 0, 0, 24, 8, 8, 0)
+                self.platform_tile_list.append([self.x + i * td, self.y])
         else:
             for i in range(self.length):
-                pyxel.blt(self.x + i * 8, self.y, 0, 0, 8, 8, 8, 0)
+                pyxel.blt(self.x + i * td, self.y, 0, 0, 8, 8, 8, 0)
+                self.platform_tile_list.append([self.x + i * td, self.y])

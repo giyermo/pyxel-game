@@ -1,5 +1,7 @@
 import pyxel
 
+td = 8  # tile dimension
+
 
 class Pipe:
     def __init__(self, type, direction):
@@ -38,7 +40,7 @@ class Pipe:
         if self.type == "top":
             pyxel.blt(
                 0 if self.direction == "right" else pyxel.width - 48,
-                pyxel.height-24*8,
+                pyxel.height-24*td,
                 0,
                 64,
                 176,
@@ -49,7 +51,7 @@ class Pipe:
         else:
             pyxel.blt(
                 0 if self.direction == "right" else pyxel.width - 32,
-                pyxel.height-5*8,
+                pyxel.height-5*td,
                 0,
                 48,
                 184,
