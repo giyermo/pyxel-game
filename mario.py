@@ -1,10 +1,13 @@
 import pyxel
-from character import Character
 
+
+from character import Character
+"""from platform import Platforms"""
 
 td = 8  # tile dimension
-
-
+ground = 39 # floor coordinate
+gravity = 0.5# gravity applied to mario
+jump = -11 # variacion de y al saltar , falta sumarle la gravedad por eso es 11
 class Mario(Character):
     def __init__(self) -> None:
         super().__init__(x=120, y=168, u=0, v=0, w=16, h=24, sprite=0)
@@ -17,8 +20,22 @@ class Mario(Character):
         self.is_dead = False
         self.is_invincible = False
         self.invincible_time = 0
+        self.position = (self.x ,self.y )
+
+    def on_ground(self):
+        return self.y + 24 >= ground
+
+
+    def collides_with_platform(self, platforms):
+        for platform in platforms.Platform.platform:
+            if self.collides_with_platform(platform):
+                return True
+        return False
+
 
     def update(self):
+
+
         if self.is_dead:
             return
         if pyxel.btn(pyxel.KEY_LEFT):
@@ -32,35 +49,54 @@ class Mario(Character):
         else:
             self.dx = 0
             self.is_running = False
-        if pyxel.btnp(pyxel.KEY_SPACE):
+        if pyxel.btnp(pyxel.KEY_SPACE) and not self.is_jumping and self.on_ground():
             self.jump()
+
+        if self.is_jumping and not pyxel.btnp(pyxel.KEY_SPACE) and self.on_ground():
+            self.dy += gravity/ 2 # Para que caiga mas lento
+        else:
+            self.dy += gravity
+
+        self.dy += gravity
+        self.y += int(self.dy)
+
         if self.is_jumping and self.is_falling != True:
             self.dy += 1
             if self.dy > 0:
                 self.is_jumping = False
-                self.dy = 0
                 self.is_falling = True
         elif self.is_falling:
             self.dy += 1
-            if self.dy > 3:
-                self.dy = 3
+            if self.y + self.h >= ground:
                 self.is_falling = False
-        else:
-            self.dy = 0
+                self.dy = 0
+
+            else:
+                self.dy = 0
+
         self.x += self.dx
-        self.y += self.dy
+        self.y += int(self.dy) #convert it to int for the setters and for it to work
+
         if self.x + self.w > pyxel.width:
             self.x = 0
         elif self.x <= 0:
             self.x = pyxel.width - self.w
         if self.y + self.h > pyxel.height-16:
             self.y = pyxel.height - self.h - 16
-
     def jump(self):
-        if self.is_jumping:
-            return
-        self.dy = -10
-        self.is_jumping = True
+        if not self.is_jumping:
+            self.dy = jump
+            self.is_jumping = True
+
+
+
+
+
+
+
+
+
+
 
     def draw(self):
         # u = (2 if self.is_falling else pyxel.frame_count // 3 % 2) * 8
