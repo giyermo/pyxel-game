@@ -4,17 +4,12 @@ td = 8  # tile dimension
 
 
 class Platform:
-
-
-    platform = []
-
     def __init__(self, x, y, type, length):
         self.x = x
         self.y = y
         self.type = type
         self.length = length
         self.platform_tile_list = []
-        Platform.platform.append(self)
 
     @property
     def x(self):
@@ -71,105 +66,24 @@ class Platform:
     def update(self):
         pass
 
-
-#3º intento xd
     def draw(self):
-        for i in range(self.length):
-            tile_x = self.x + i * td
-            tile_y = self.y
-
-            if self.type == 1:
-                pyxel.blt(tile_x, tile_y, 0, 0, 224, 8, 8, 0)
-            elif self.type == 2:
-                pyxel.blt(tile_x, tile_y, 0, 0, 8, 8, 8, 0)
-            elif self.type == 3:
-                pyxel.blt(tile_x, tile_y, 0, 0, 16, 8, 8, 0)
-            elif self.type == 4:
-                pyxel.blt(tile_x, tile_y, 0, 0, 24, 8, 8, 0)
-            else:
-                pyxel.blt(tile_x, tile_y, 0, 0, 8, 8, 8, 0)
-
-            self.platform_tile_list.append((self.type, tile_x, tile_y))
-
-        for platform in Platform.platform:
-                print(f"Platform at X: {platform.x}, Y: {platform.y}")
-
-        """def draw(self):
-                   print("This works")
-                   for i in range(self.length):
-                       tile_x = self.x + i * td
-                       tile_y = self.y
-
-                       if self.type == 1:
-                           pyxel.blt(tile_x, tile_y, 0, 0, 224, 8, 8, 0)
-                       elif self.type == 2:
-                           pyxel.blt(tile_x, tile_y, 0, 0, 8, 8, 8, 0)
-                       elif self.type == 3:
-                           pyxel.blt(tile_x, tile_y, 0, 0, 16, 8, 8, 0)
-                       elif self.type == 4:
-                           pyxel.blt(tile_x, tile_y, 0, 0, 24, 8, 8, 0)
-                       else:
-                           pyxel.blt(tile_x, tile_y, 0, 0, 8, 8, 8, 0)
-
-                       # Append a tuple with type and coordinates to the list
-                       self.platform_tile_list.append((self.type, tile_x, tile_y))
-                   for tile_info in self.platform_tile_list:
-               print(f"    Type: {tile_info[0]}, X: {tile_info[1]}, Y: {tile_info[2]}")"""
-
-
-
-
-
-
-        """def draw(self):
         if self.type == 1:
             for i in range(self.length):
-                tile_x = self.x + i * td # separando en cada coordenada para guardarlo en la lista
-                tile_y = self.y
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 224, 8, 8, 0)
-
-                self.platform_tile_list.append((self.type, tile_x, tile_y)) #guardarlo en una lista
-
                 self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 2:
             for i in range(self.length):
-                tile_x = self.x + i * td  # separando en cada coordenada para guardarlo en la lista
-                tile_y = self.y
-
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 8, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
-
-                self.platform_tile_list.append((self.type, tile_x, tile_y))  # guardarlo en una lista
-
         elif self.type == 3:
             for i in range(self.length):
-                tile_x = self.x + i * td  # separando en cada coordenada para guardarlo en la lista
-                tile_y = self.y
-
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 16, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
-
-                self.platform_tile_list.append((self.type, tile_x, tile_y))  # guardarlo en una lista
         elif self.type == 4:
             for i in range(self.length):
-                tile_x = self.x + i * td  # separando en cada coordenada para guardarlo en la lista
-                tile_y = self.y
-
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 24, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
-
-                self.platform_tile_list.append((self.type, tile_x, tile_y))  # guardarlo en una lista
         else:
             for i in range(self.length):
-                tile_x = self.x + i * td  # separando en cada coordenada para guardarlo en la lista
-                tile_y = self.y
-
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 8, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
-
-
-
-        for tile_info in self.platform_tile_list:
-            print(f"Type: {tile_info[0]}, X: {tile_info[1]}, Y: {tile_info[2]}")
-"""
-
