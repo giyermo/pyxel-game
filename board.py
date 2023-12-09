@@ -35,7 +35,7 @@ class Board:
             Platform(0, pyxel.height-20*td, 1, 14*td),
             Platform(pyxel.width-14*td,
                      pyxel.height-20*td, 1, 14*td),
-            Platform(0, pyxel.height-13*td, 1, 4),
+            Platform(0, pyxel.height-13*td, 1, 4*td),
             Platform(pyxel.width-4*td, pyxel.height-13*td, 1, 4*td),
             Platform(pyxel.width//2-8*td,
                      pyxel.height-14*td, 1, 16*td),
