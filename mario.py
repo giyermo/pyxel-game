@@ -43,7 +43,8 @@ class Mario(Character):
             self.fall()
 
     def update(self):
-        '''Update values for the Mario object.'''
+        '''Update values for the Mario object according to dx and dy and the current position of the character.'''
+        print("Update:", self.is_falling, self.x, self.y, self.dx, self.dy)
         self.x += self.dx
         if self.x <= 0:
             self.x = pyxel.width - self.w

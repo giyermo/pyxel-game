@@ -18,6 +18,8 @@ class Board:
 
         global mario
         mario = Mario()
+        mario.x = 20
+        mario.y = 134
 
         global enemy
         enemy = Enemy()
@@ -59,15 +61,14 @@ class Board:
         enemy2.update()
         enemy3.update()
 
-        print("calculating",
-              mario.x, mario.y, mario.dx, mario.dy)
-        # for platform in platforms:
-        #     values = mario.push_back(
-        #         mario.x, mario.y, mario.w, mario.h, mario.dx, mario.dy, platform)
+        for platform in platforms:
+            mario.push_back(platform)
 
         mario.update()
-        print("updating",
-              mario.x, mario.y, mario.dx, mario.dy)
+
+        mario.check_falling(platforms)
+
+        print("Falling: ", mario.is_falling)
 
     def draw(self):
         for platform in platforms:

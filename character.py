@@ -123,45 +123,66 @@ class Character:
             self.__sprite = sprite
 
     @staticmethod
-    def detect_collision(x, y, w, h, dx, dy, object):
+    def detect_collision(self, object):
         '''Returns if a character is collding with a platform, which direction is the collision.'''
-        if x + w + dx < object.x or x > object.x + object.length:  # not under or over it
+        if self.x + self.w + self.dx < object.x or self.x > object.x + object.length:  # not under or over it
             return (False, None)
-        elif (x + w + dx > object.x and x + dx < object.x) or (x + w + dx > object.x + object.length and x + dx < object.x + object.length):  # between borders
-            if y + h + dy < object.y or y > object.y + td:  # not to the side of it
+        elif (self.x + self.w + self.dx > object.x and self.x + self.dx < object.x) or (self.x + self.w + self.dx > object.x + object.length and self.x + self.dx < object.x + object.length):  # between borders
+            if self.y + self.h + self.dy < object.y or self.y > object.y + td:  # not to the side of it
                 return (False, None)
-            elif (y + h + dy > object.y and y + dy < object.y) or (y + h + dy > object.y + td and y + dy < object.y + td) or (y + h + dy > object.y + td and y + dy < object.y):  # to the side of it
+            elif (self.y + self.h + self.dy > object.y and self.y + self.dy < object.y) or (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y + td) or (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y):  # to the side of it
                 return (True, "horizontal")
         else:  # under or over it
-            if y + h + dy < object.y or y > object.y + td:  # not to the side of it
+            if self.y + self.h + self.dy < object.y or self.y + self.dy > object.y + td:  # not to the side of it
                 return (False, None)
-            elif (y + h + dy > object.y and y + dy < object.y) or (y + h + dy > object.y + td and y + dy < object.y + td) or (y + h + dy > object.y + td and y + dy < object.y):  # to the side of it
-                return (True, "vertical")
-            else:
+            else:  # if (self.y + self.h + self.dy > object.y and self.y + self.dy < object.y) or (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y + td) or (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y):  # to the side of it
                 return (True, "vertical")
 
-    def push_back(self, x, y, w, h, dx, dy, platform):
+    def on_platform(self, platform):
+        '''Returns if a character is on a platform.'''
+        if self.y + self.h + self.dy == platform.y - 1:
+            if self.x + self.w + self.dx < platform.x or self.x > platform.x + platform.length:
+                return False
+            else:
+                return True
+        else:
+            return False
+
+    def check_falling(self, platforms):
+        on_platform = False
+        i = 0
+
+        while not on_platform and i < len(platforms):
+            if self.on_platform(platforms[i]):
+                on_platform = True
+            i += 1
+
+        self.is_falling = not on_platform
+
+    def push_back(self, platform):
         '''Push a character back to the platform it is colliding with.'''
-        abs_dx = abs(dx)
-        abs_dy = abs(dy)
-        if self.detect_collision(x, y, w, h, dx, dy, platform)[0]:
-            print("collsion with", platform)
-            if self.detect_collision(x, y, w, h, dx, dy, platform)[1] == "horizontal":
+        collision, direction = self.detect_collision(self, platform)
+        if collision:
+            print("collison with", platform)
+            if direction == "horizontal":
                 print("pushing horizontally")
-                sign = -1 if dx > 0 else 1
-                for _ in range(abs_dx):
-                    if self.detect_collision(x, y, w, h, dx + sign, dy, platform)[0]:
-                        dx += sign
-                        print(x, dx)
+                sign = -1 if self.dx > 0 else 1
+                while collision:
+                    self.dx += sign
+                    collision, direction = self.detect_collision(
+                        self, platform)
+                self.is_falling = True
             else:
-                print("pushing vertically")
-                sign = -1 if dy > 0 else 1
-                for _ in range(abs_dy):
-                    if self.detect_collision(x, y, w, h, dx, dy + sign, platform)[0]:
-                        dy += sign
-                        print(y, dy)
+                sign = -1 if self.dy > 0 else 1
+                if sign == -1:
+                    self.is_falling = False
+                while collision:
+                    self.dy += sign
+                    collision, direction = self.detect_collision(
+                        self, platform)
+        # else:
+        #     self.is_falling = True
 
-        return x, y
         # abs_dx = abs(dx)
         # abs_dy = abs(dy)
         # if abs_dx > abs_dy:
@@ -190,4 +211,4 @@ class Character:
         #         if self.detect_collision(x + sign, y, w, h, dx, dy, platform):
         #             x += sign
         #             print(x, dx)
-        return x, y, dx, dy
+        # return x, y, dx, dy
