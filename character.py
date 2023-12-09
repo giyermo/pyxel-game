@@ -2,41 +2,6 @@ import pyxel
 
 
 td = 8  # tile dimension
-# def get_tile(tile_x, tile_y):
-#     return pyxel.tilemap(0).pget(tile_x, tile_y)
-
-
-# def push_back(x, y, dx, dy):
-#     abs_dx = abs(dx)
-#     abs_dy = abs(dy)
-#     if abs_dx > abs_dy:
-#         sign = 1 if dx > 0 else -1
-#         for _ in range(abs_dx):
-#             if detect_collision(x + sign, y, dy):
-#                 break
-#             x += sign
-#         sign = 1 if dy > 0 else -1
-#         for _ in range(abs_dy):
-#             if detect_collision(x, y + sign, dy):
-#                 break
-#             y += sign
-#     else:
-#         sign = 1 if dy > 0 else -1
-#         for _ in range(abs_dy):
-#             if detect_collision(x, y + sign, dy):
-#                 break
-#             y += sign
-#         sign = 1 if dx > 0 else -1
-#         for _ in range(abs_dx):
-#             if detect_collision(x + sign, y, dy):
-#                 break
-#             x += sign
-#     return x, y, dx, dy
-
-
-# def is_wall(x, y):
-#     tile = get_tile(x // 8, y // 8)
-#     return tile == TILE_FLOOR or tile[0] >= WALL_TILE_X
 
 
 class Character:
@@ -79,7 +44,6 @@ class Character:
 
     @x.setter
     def x(self, x):
-
 
         if type(x) is not int:
             raise TypeError("x must be an integer")
@@ -156,13 +120,52 @@ class Character:
         else:
             self.__sprite = sprite
 
-    """def detect_collision(self):
-        for yi in range(y1, y2 + 1):
-            for xi in range(x1, x2 + 1):
-                if get_tile(xi, yi)[0] >= WALL_TILE_X:
-                    return True
-        if dy > 0 and y % 8 == 1:
-            for xi in range(x1, x2 + 1):
-                if get_tile(xi, y1 + 1) == TILE_FLOOR:
-                    return True
-        return False"""
+    @staticmethod
+    def detect_collision(x, y, w, h, dx, dy, object):
+        '''Returns if a character is collding with a platform, which direction is the collision.'''
+        if x + w + dx < object.x or x > object.x + object.length:  # not under or over it
+            return (False)
+        else:  # under or over it
+            if y + h + dy < object.y or y > object.y + td:  # not to the side of it
+                return (False)
+            # elif (y + h + dy > object.y and y + dy < object.y) or (y + h + dy > object.y + td and y + dy < object.y + td):  # to the side of it
+            #     return (True)
+            else:  # to the side of it
+                return (True)
+
+    def push_back(self, x, y, w, h, dx, dy, platform):
+        '''Push a character back to the platform it is colliding with.'''
+        abs_dx = abs(dx)
+        abs_dy = abs(dy)
+        if abs_dx > abs_dy:
+            print("pushing x")
+            sign = -1 if dx > 0 else 1
+            for _ in range(abs_dx):
+                if self.detect_collision(x + sign, y, w, h, dx, dy, platform):
+                    x += sign
+                else:
+                    break
+            sign = -1 if dy > 0 else 1
+            for _ in range(abs_dy):
+                if self.detect_collision(x, y + sign, w, h, dx, dy, platform):
+                    y += sign
+                else:
+                    break
+        else:
+            # sign is negative if charcter is going down and the viceverse
+            sign = -1 if dy > 0 else 1
+            for _ in range(abs_dy):
+                if self.detect_collision(x, y + sign, w, h, dx, dy, platform):
+                    print("collision")
+                    y += sign
+                else:
+                    break
+            # sign is negative if charcter is going right and viceverse
+            sign = -1 if dx > 0 else 1
+            for _ in range(abs_dx):
+                if self.detect_collision(x + sign, y, w, h, dx, dy, platform):
+                    print("collision")
+                    x += sign
+                else:
+                    break
+        return x, y, dx, dy

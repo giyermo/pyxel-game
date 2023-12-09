@@ -68,7 +68,7 @@ class Platform:
 
     def draw(self):
         if self.type == 1:
-            for i in range(self.length):
+            for i in range(self.length//8):
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 224, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 2:
