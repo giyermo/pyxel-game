@@ -54,24 +54,19 @@ class Board:
                  Pipe("bottom", "left")]
 
     def update(self):
-        print("before calculating movements",
-              mario.x, mario.y, mario.dx, mario.dy)
         values = mario.calculate_movement()
         enemy.update()
         enemy2.update()
         enemy3.update()
 
-        print("after calculating movements",
+        print("calculating",
               mario.x, mario.y, mario.dx, mario.dy)
-        for platform in platforms:
-            collision = mario.detect_collision(
-                mario.x, mario.y, mario.w, mario.h, mario.dx, mario.dy, platform)
-            if collision:
-                values = mario.push_back(
-                    mario.x, mario.y, mario.w, mario.h, mario.dx, mario.dy, platform)
+        # for platform in platforms:
+        #     values = mario.push_back(
+        #         mario.x, mario.y, mario.w, mario.h, mario.dx, mario.dy, platform)
 
         mario.update(*values)
-        print("after updating",
+        print("updating",
               mario.x, mario.y, mario.dx, mario.dy)
 
     def draw(self):

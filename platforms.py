@@ -11,6 +11,12 @@ class Platform:
         self.length = length
         self.platform_tile_list = []
 
+    def __str__(self) -> str:
+        return f"Platform: x={self.x}, y={self.y}, type={self.type}, length={self.length}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
     @property
     def x(self):
         return self.__x
