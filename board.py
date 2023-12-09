@@ -54,7 +54,7 @@ class Board:
                  Pipe("bottom", "left")]
 
     def update(self):
-        values = mario.calculate_movement()
+        mario.calculate_movement()
         enemy.update()
         enemy2.update()
         enemy3.update()
@@ -65,7 +65,7 @@ class Board:
         #     values = mario.push_back(
         #         mario.x, mario.y, mario.w, mario.h, mario.dx, mario.dy, platform)
 
-        mario.update(*values)
+        mario.update()
         print("updating",
               mario.x, mario.y, mario.dx, mario.dy)
 

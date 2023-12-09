@@ -26,53 +26,45 @@ class Mario(Character):
         '''Calculate the differential of x and y according to how much Mario is going to move in each axis'''
         if self.is_dead:
             return
-        dx, dy = 0, 0
         if pyxel.btn(pyxel.KEY_LEFT):
-            dx = -2
+            self.dx = -2
             self.direction = -1
             self.is_running = True
         elif pyxel.btn(pyxel.KEY_RIGHT):
-            dx = 2
+            self.dx = 2
             self.direction = 1
             self.is_running = True
         else:
-            dx = 0
+            self.dx = 0
             self.is_running = False
-        print("before all", dy)
         if pyxel.btnp(pyxel.KEY_SPACE):
-            dy = self.jump()
-            print("after jump", dy)
+            self.jump()
         if self.is_falling:
-            dy = self.fall(dy)
-            print("after fall", dy)
+            self.fall()
 
-        return dx, dy
-
-    def update(self, dx, dy):
+    def update(self):
         '''Update values for the Mario object.'''
-        self.x += dx
+        self.x += self.dx
         if self.x <= 0:
             self.x = pyxel.width - self.w
         elif self.x + self.w > pyxel.width:
             self.x = 0
-        self.y = min(self.y + dy, pyxel.height - 2*td - self.h)
+        self.y = min(self.y + self.dy, pyxel.height - 2*td - self.h)
 
-    def jump(self, jump_strength=jump_strength):
+    def jump(self):
         '''Makes mario jump according to the jump strength.'''
         if self.is_jumping or self.is_falling:
-            return 0
-        else:
-            self.is_falling = True
-            return jump_strength
+            return
+        self.dy = jump_strength
+        self.is_falling = True
 
-    def fall(self, dy):
+    def fall(self):
         '''Pushes down mario if he is in the air quicker each time until it reaches a terminal velocity.'''
         self.is_jumping = False
-        if self.y + dy >= pyxel.height - 2*td - self.h:
+        self.dy += 2
+        self.dy = min(self.dy, terminal_velocity)
+        if self.y + self.dy >= pyxel.height - 2*td - self.h:
             self.is_falling = False
-        dy += 2
-        dy = min(dy, terminal_velocity)
-        return dy
 
     def update_animation(self):
         # Function to create the different mario animations , this function is put in the update function
