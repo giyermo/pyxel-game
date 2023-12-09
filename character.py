@@ -79,6 +79,8 @@ class Character:
 
     @x.setter
     def x(self, x):
+
+
         if type(x) is not int:
             raise TypeError("x must be an integer")
         # elif x + self.w > pyxel.width:
@@ -154,7 +156,7 @@ class Character:
         else:
             self.__sprite = sprite
 
-    def detect_collision(self):
+    """def detect_collision(self):
         for yi in range(y1, y2 + 1):
             for xi in range(x1, x2 + 1):
                 if get_tile(xi, yi)[0] >= WALL_TILE_X:
@@ -163,4 +165,4 @@ class Character:
             for xi in range(x1, x2 + 1):
                 if get_tile(xi, y1 + 1) == TILE_FLOOR:
                     return True
-        return False
+        return False"""
