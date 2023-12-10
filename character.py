@@ -125,18 +125,35 @@ class Character:
     @staticmethod
     def detect_collision(self, object):
         '''Returns if a character is collding with a platform, which direction is the collision.'''
-        if self.x + self.w + self.dx < object.x or self.x > object.x + object.length:  # not under or over it
-            return (False, None)
-        elif (self.x + self.w + self.dx > object.x and self.x + self.dx < object.x) or (self.x + self.w + self.dx > object.x + object.length and self.x + self.dx < object.x + object.length):  # between borders
-            if self.y + self.h + self.dy < object.y or self.y > object.y + td:  # not to the side of it
-                return (False, None)
-            elif (self.y + self.h + self.dy > object.y and self.y + self.dy < object.y) or (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y + td) or (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y):  # to the side of it
-                return (True, "horizontal")
-        else:  # under or over it
-            if self.y + self.h + self.dy < object.y or self.y + self.dy > object.y + td:  # not to the side of it
-                return (False, None)
-            else:  # if (self.y + self.h + self.dy > object.y and self.y + self.dy < object.y) or (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y + td) or (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y):  # to the side of it
-                return (True, "vertical")
+        if self.x + self.w + self.dx < object.x or self.x > object.x + object.length:
+            # not to the side of it
+            return (False, "No collision")
+        if self.y + self.h + self.dy < object.y or self.y + self.dy > object.y + td:
+            # not under or over it
+            return (False, "No collision")
+        if abs(self.dy) >= abs(self.dx):
+            return (True, "vertical")
+        else:
+            return (True, "horizontal")
+        # if self.x + self.w < object.x or self.x > object.x + object.length:
+            # self was outside the platform
+
+        # if self.x + self.w + self.dx < object.x or self.x > object.x + object.length:  # not under or over it
+        #     return (False, "No collision")
+        # elif (self.x + self.w + self.dx > object.x and self.x + self.dx < object.x) or (self.x + self.w + self.dx > object.x + object.length and self.x + self.dx < object.x + object.length):  # between borders
+        #     if self.y + self.h + self.dy < object.y or self.y > object.y + td:  # not to the side of it
+        #         return (False, "No collision")
+        #     # to the side of it in between borders
+        #     elif (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y):
+        #         return (True, "horizontal")
+        #     else:
+        #         return (True, "vertical")
+        #     # elif (self.y + self.h + self.dy > object.y and self.y + self.dy < object.y) or (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y + td):
+        # else:  # under or over it
+        #     if self.y + self.h + self.dy < object.y or self.y + self.dy > object.y + td:  # not to the side of it
+        #         return (False, "No collision")
+        #     else:  # if (self.y + self.h + self.dy > object.y and self.y + self.dy < object.y) or (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y + td) or (self.y + self.h + self.dy > object.y + td and self.y + self.dy < object.y):  # to the side of it
+        #         return (True, "vertical")
 
     def on_platform(self, platform):
         '''Returns if a character is on a platform.'''
@@ -180,6 +197,7 @@ class Character:
                     self.dy += sign
                     collision, direction = self.detect_collision(
                         self, platform)
+                    print(collision, direction, platform)
         # else:
         #     self.is_falling = True
 

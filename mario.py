@@ -52,11 +52,12 @@ class Mario(Character):
             self.x = pyxel.width - self.w
         elif self.x + self.w > pyxel.width:
             self.x = 0
-        self.y = min(self.y + self.dy, pyxel.height - 2*td - self.h)
+        # min(self.y + self.dy, pyxel.height - 2*td - self.h)
+        self.y = self.y + self.dy
 
     def jump(self):
         '''Makes mario jump according to the jump strength.'''
-        if self.is_jumping or self.is_falling:
+        if self.is_falling:
             return
         self.dy = jump_strength
 

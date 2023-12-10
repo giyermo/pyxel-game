@@ -17,8 +17,8 @@ class Board:
 
         global mario
         mario = Mario()
-        mario.x = 20
-        mario.y = 134
+        mario.x = 10
+        mario.y = 90
 
         global enemy
         enemy = Enemy()
@@ -33,7 +33,7 @@ class Board:
     def create_platforms():
         global platforms
         platforms = [
-            Platform(0, pyxel.height-2*td, 0, 16),
+            Platform(0, pyxel.height-2*td, 0, 33*td),
             Platform(0, pyxel.height-20*td, 1, 14*td),
             Platform(pyxel.width-14*td,
                      pyxel.height-20*td, 1, 14*td),
