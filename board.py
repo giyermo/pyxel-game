@@ -14,26 +14,11 @@ td = 8  # tile dimension
 
 class Board:
     def __init__(self):
-        self.shellcreeper_spawn_delay = 100
-        self.shellcreepers_spawned = 0
-        self.max_shellcreepers = 3
         self.stage = 1
         self.create_platforms()
         self.create_pipes()
-
-        self.enemies = []
-
-        self.shellcreepers = []
-
+        self.stage_1()
         self.mario = Mario()
-        self.mario.x = 10
-        self.mario.y = 90
-
-        global enemy2
-        enemy2 = Enemy2()
-
-        global enemy3
-        enemy3 = Enemy3()
 
     @staticmethod
     def create_platforms():
@@ -59,6 +44,13 @@ class Board:
                  Pipe("bottom", "right"),
                  Pipe("bottom", "left")]
 
+    def stage_1(self):
+        self.enemies = []
+        self.shellcreepers = []
+        self.shellcreeper_spawn_delay = 100
+        self.shellcreepers_spawned = 0
+        self.max_shellcreepers = 3
+
     def spawn_shellcreepers(self):
         self.shellcreeper_spawn_delay -= 1
         if self.shellcreeper_spawn_delay <= 0:
@@ -79,41 +71,65 @@ class Board:
                 enemy1.reverse()
                 enemy2.reverse()
 
+    def push_back_mario_with_platforms(self):
+        for platform in platforms:
+            self.mario.push_back(platform)
+
+    def push_back_enemies_with_platforms(self):
+        for platform in platforms:
+            for enemy in self.enemies:
+                enemy.push_back(platform)
+
+    def check_if_mario_dies(self):
+        for enemy in self.enemies:
+            if self.mario.check_collision(enemy):
+                self.mario.die()
+
+    def calculate_enemy_movements(self):
+        i = len(self.enemies) - 1
+
+        while i >= 0:
+            if self.enemies[i].is_alive:
+                self.enemies[i].calculate_movement()
+            else:
+                self.enemies.pop(i)
+            i -= 1
+
+    def check_collision_between_enemies(self):
+        if len(self.enemies) > 1:
+            for i in range(len(self.enemies)):
+                self.check_enemies(i)
+
+    def update_enemies(self):
+        for enemy in self.enemies:
+            enemy.update()
+
     def update(self):
         if self.stage == 1:
             self.spawn_shellcreepers()
+
             self.mario.calculate_movement()
 
-            i = len(self.enemies) - 1
+            self.calculate_enemy_movements()
 
-            while i >= 0:
-                if self.enemies[i].is_alive:
-                    self.enemies[i].calculate_movement()
-                else:
-                    self.enemies.pop(i)
-                i -= 1
+            if not self.mario.is_dead:
+                self.push_back_mario_with_platforms()
 
-            enemy2.update()
-            enemy3.update()
+            self.push_back_enemies_with_platforms()
 
-            for platform in platforms:
-                self.mario.push_back(platform)
-                for enemy in self.enemies:
-                    enemy.push_back(platform)
+            self.check_if_mario_dies()
 
-            for enemy in self.enemies:
-                if self.mario.check_collision(enemy):
-                    self.mario.die()
+            self.check_collision_between_enemies()
 
-            if len(self.enemies) > 1:
-                for i in range(len(self.enemies)):
-                    self.check_enemies(i)
+            self.update_enemies()
 
-            for enemy in self.enemies:
-                enemy.update()  # Move normally
             self.mario.update()
 
-            self.mario.check_falling(platforms)
+            if not self.mario.is_dead:
+                self.mario.check_falling(platforms)
+            elif self.mario.y > pyxel.height * 2 and self.mario.lifes > 0:
+                self.mario.lifes -= 1
+                self.mario.respawn()
 
     def draw(self):
         for platform in platforms:
@@ -123,5 +139,3 @@ class Board:
         for enemy in self.enemies:
             enemy.draw()
         self.mario.draw()
-        enemy2.draw()
-        enemy3.draw()

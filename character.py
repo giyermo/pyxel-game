@@ -141,7 +141,6 @@ class Character:
         y_overlap = not (self.y + self.h + self.dy <=
                          other.y or self.y + self.dy >= other.y + other.h)
 
-        print(x_overlap, y_overlap)
         if x_overlap and y_overlap:
             return True
 

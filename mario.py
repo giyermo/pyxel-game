@@ -8,9 +8,11 @@ jump_strength = -16
 
 class Mario(Character):
     def __init__(self) -> None:
-        super().__init__(x=120, y=184, u=0, v=0, w=16, h=24, terminal_velocity=3, sprite=0)
+        super().__init__(x=16*td-4, y=pyxel.height-6*td, u=0, v=0,
+                         w=16, h=24, terminal_velocity=3, sprite=0)
         self.dx = 0
         self.dy = 0
+        self.lifes = 3
         self.direction = 1
         self.is_jumping = False
         self.is_running = False
@@ -18,6 +20,7 @@ class Mario(Character):
         self.is_invincible = False
         self.invincible_time = 0
         self.frame_count = 0
+        self.dying_frame_count = 0
         self.running_sprites = [16, 32, 48]
         self.is_transitioning = False
 
@@ -52,11 +55,29 @@ class Mario(Character):
             self.x = pyxel.width - abs(self.w)
         elif self.x + abs(self.w) > pyxel.width:
             self.x = 0
-        # min(self.y + self.dy, pyxel.height - 2*td - self.h)
+        if self.is_dead and self.dying_frame_count >= 80:
+            self.dx = 0
+            self.dy = 3
         self.y = self.y + self.dy
+
+    def respawn(self):
+        self.x = 16*td-4
+        self.y = pyxel.height-6*td
+        self.dx = 0
+        self.dy = 0
+        self.direction = 1
+        self.is_jumping = False
+        self.is_running = False
+        self.is_dead = False
+        self.is_invincible = False
+        self.invincible_time = 0
+        self.frame_count = 0
+        self.dying_frame_count = 0
+        self.is_transitioning = False
 
     def die(self):
         self.is_dead = True
+        self.dying_frame_count += 1
 
     def jump(self):
         '''Makes mario jump according to the jump strength.'''
@@ -93,26 +114,41 @@ class Mario(Character):
             # Reset animation frame count for non-running states
             self.frame_count = 0
 
-    def draw(self):
+    def running_animation(self):
+        frame_duration = 0.1
+        frame_index = int((self.frame_count / 60) /
+                          frame_duration) % len(self.running_sprites)
 
-        if self.is_dead:
+        if self.direction > 0:  # Moving right
+            pyxel.blt(self.x, self.y, self.sprite, self.running_sprites[frame_index], self.v, self.w, self.h,
+                      colkey=0)
+        elif self.direction < 0:  # Moving left
+            # Use left-facing sprites and flip horizontally
+            pyxel.blt(self.x, self.y, self.sprite, self.running_sprites[frame_index], self.v, self.w, self.h,
+                      colkey=0)
+
+    def falling_animation(self):
+        pyxel.blt(self.x, self.y, self.sprite, 64,
+                  self.v, self.w, self.h, colkey=0)
+
+    def dying_animation(self, state):
+        if state == "surprised":
             pyxel.blt(self.x, self.y, self.sprite, 96,
                       self.v, self.w, self.h, colkey=0)
-        elif self.is_running:
-            frame_duration = 0.1
-            frame_index = int((self.frame_count / 60) /
-                              frame_duration) % len(self.running_sprites)
-
-            if self.direction > 0:  # Moving right
-                pyxel.blt(self.x, self.y, self.sprite, self.running_sprites[frame_index], self.v, self.w, self.h,
-                          colkey=0)
-            elif self.direction < 0:  # Moving left
-                # Use left-facing sprites and flip horizontally
-                pyxel.blt(self.x, self.y, self.sprite, self.running_sprites[frame_index], self.v, self.w, self.h,
-                          colkey=0)
-        elif self.is_falling:
-            pyxel.blt(self.x, self.y, self.sprite, 64,
+        else:
+            pyxel.blt(self.x, self.y, self.sprite, 112,
                       self.v, self.w, self.h, colkey=0)
+
+    def draw(self):
+        if self.is_dead:
+            if self.dying_frame_count <= 60:
+                self.dying_animation("surprised")
+            else:
+                self.dying_animation("dying")
+        elif self.is_running:
+            self.running_animation()
+        elif self.is_falling:
+            self.falling_animation()
         else:
             frame_duration = 0.1  # Time in seconds for each frame
             # Assuming 3 frames for each direction
@@ -121,47 +157,3 @@ class Mario(Character):
             # Use right-facing sprites for static
             pyxel.blt(self.x, self.y, self.sprite, frame_index *
                       8, self.v, self.w, self.h, colkey=0)
-
-        """ def draw(self):
-
-        # a lo mejor hacer otra condicion para mientras cae que no corra y se quede mirando al lado que toque la flecha
-
-        if self.is_running:
-            pyxel.blt(self.x, self.y, self.sprite, self.u, self.v, self.w, self.h, colkey=0)
-        if self.is_falling and self.is_running:
-
-            if self.direction > 0:
-                pyxel.blt(self.x, self.y, self.sprite, self.u, self.v, self.w, self.h, colkey=0) # poner sprite mirando a la derecha sin correr
-            else:
-                pyxel.blt(self.x, self.y, self.sprite, self.u, self.v, self.w, self.h, colkey=0) # poner sprite mirando a la izquierda sin correr
-
-        else:
-            frame_duration = 0.1  # Time in seconds for each frame
-            frame_index = int(
-                (self.frame_count / 60) % frame_duration) % 3  # Assuming 3 frames for each direction
-
-
-            if self.is_jumping:
-                self.u = 64  # Set the sprite coordinates for jumping
-                pyxel.blt(self.x, self.y, self.sprite, self.u, self.v, self.w, self.h, colkey=0)
-            elif self.is_falling:
-                self.u = 32  # Set the sprite coordinates for falling
-                pyxel.blt(self.x, self.y, self.sprite, self.u, self.v, self.w, self.h, colkey=0)
-
-         pyxel.blt(self.x, self.y, self.sprite, self.u, self.v, self.w, self.h, colkey=0)"""
-
-        # Set sprite coordinates based on direction and animation state
-        # if self.is_running:
-
-        #     if self.direction > 0:  # Moving right
-        #         self.u = frame_index * 8 + 16
-        #     elif self.direction < 0:  # Moving left
-        #         self.u = frame_index * 8 + 16  # Use right-facing sprites and flip horizontally
-        #         self.w = -self.w  # Flip the sprite horizontally
-
-        # else:
-
-        #     pyxel.blt(self.x, self.y, self.sprite,
-        #           self.u, self.v, 16, 24, colkey=0)
-        # if self.is_invincible:
-        #    pyxel.blt(self.x, self.y, 0, u, 16, w, 8, pyxel.COLOR_RED)
