@@ -1,11 +1,18 @@
 import pyxel
 from character import Character
 
+td = 8
+
 
 class Shellcreeper(Character):
-    def __init__(self) -> None:
-        super().__init__(x=180, y=135, u=0, v=24, w=16, h=16, terminal_velocity=3, sprite=0)
-        self.direction = 1  # Start moving to the right
+    def __init__(self, direction=1) -> None:
+        super().__init__(x=0, y=4*td, u=0, v=24, w=16, h=16,
+                         terminal_velocity=3, sprite=0)  # Start moving to the right
+        self.direction = direction
+        if self.direction == 1:
+            self.x = 6 * td
+        else:
+            self.x = pyxel.width - 6*td - abs(self.w)
         self.is_alive = True
         self.dy = 0
         self.backwards = False
@@ -21,7 +28,7 @@ class Shellcreeper(Character):
 
     def calculate_movement(self):
         self.dy = min(self.dy + 1, 3)
-        self.dx = 1
+        self.dx = self.direction
         self.frame_count += 1  # Counts the frames for the animation to be fluid
         # Check if the enemy has moved off-screen to the right
 
@@ -30,16 +37,32 @@ class Shellcreeper(Character):
         if self.is_falling:
             self.fall()
 
+    def reverse(self):
+        self.dx *= -1
+        self.direction *= -1  # Flip direction
+
+    def check_enemy_collision(self, enemies):
+        for other in enemies:
+            if self != other and self.check_collision(other):
+                return (True, other)
+        return (False, None)
+
     def update(self):
-        print(self.dx)
         if self.frame_count % self.move_interval == 0:
             self.x += self.dx  # Update the x position based on the direction
-        if self.x < 0:
-            self.x = pyxel.width - abs(self.w)
-        elif self.x + abs(self.w) > pyxel.width:
-            self.x = 0
         # min(self.y + self.dy, pyxel.height - 2*td - self.h)
         self.y = self.y + self.dy
+        if self.y + self.h >= pyxel.height - 2*td - 1:
+            if self.x + abs(self.w) > pyxel.width - 4 * td:
+                self.x = 6 * td
+                self.y = 4 * td
+            elif self.x < 4 * td:
+                self.x = pyxel.width - (6 * td) - abs(self.w)
+                self.y = 4 * td
+        if self.x <= 0:
+            self.x = pyxel.width - abs(self.w)
+        elif self.x + abs(self.w) > pyxel.width:
+            self.x = 1
 
     def movement(self):
         # Falta golpe y cuando se enfada pero eso en el update y una funcion nueva
@@ -47,12 +70,11 @@ class Shellcreeper(Character):
         frame_index = int((self.frame_count / 60) /
                           frame_duration) % len(self.running_sprites)
 
+        self.u = self.running_sprites[frame_index]
         if self.direction > 0:  # Moving right
-            self.u = self.running_sprites[frame_index]
             self.w = abs(self.w)  # Ensure width is positive
-        elif self.direction < 0:  # Moving left
+        else:  # Moving left
             # Shift to the next set of sprites for left
-            self.u = self.running_sprites[frame_index] + 16
             self.w = -abs(self.w)  # Flip the sprite horizontally
         # elif self.backwards:
 

@@ -1,4 +1,6 @@
 import pyxel
+import random
+import time
 from mario import Mario
 from shellcreeper import Shellcreeper
 from enemy2 import Enemy2
@@ -12,16 +14,21 @@ td = 8  # tile dimension
 
 class Board:
     def __init__(self):
+        self.shellcreeper_spawn_delay = 100
+        self.shellcreepers_spawned = 0
+        self.max_shellcreepers = 3
+        self.stage = 1
         self.create_platforms()
         self.create_pipes()
+
+        self.enemies = []
+
+        self.shellcreepers = []
 
         global mario
         mario = Mario()
         mario.x = 10
         mario.y = 90
-
-        global shellcreeper
-        shellcreeper = Shellcreeper()
 
         global enemy2
         enemy2 = Enemy2()
@@ -53,27 +60,60 @@ class Board:
                  Pipe("bottom", "right"),
                  Pipe("bottom", "left")]
 
+    def spawn_shellcreepers(self):
+        self.shellcreeper_spawn_delay -= 1
+        if self.shellcreeper_spawn_delay <= 0:
+            # Spawn enemy
+            if len(self.shellcreepers) < self.max_shellcreepers and self.shellcreepers_spawned < self.max_shellcreepers:  # Check max
+                shellcreeper_direction = random.choice([-1, 1])
+                new_shellcreeper = Shellcreeper(
+                    direction=shellcreeper_direction)  # Create new instance
+                self.shellcreepers.append(new_shellcreeper)  # Add to list
+                self.shellcreepers_spawned += 1
+                self.enemies.append(new_shellcreeper)
+            self.shellcreeper_spawn_delay = 300  # Reset counter
+
     def update(self):
-        mario.calculate_movement()
-        shellcreeper.calculate_movement()
-        enemy2.update()
-        enemy3.update()
+        if self.stage == 1:
+            self.spawn_shellcreepers()
+            mario.calculate_movement()
 
-        for platform in platforms:
-            mario.push_back(platform)
-            shellcreeper.push_back(platform)
+            i = len(self.enemies) - 1
 
-        mario.update()
-        shellcreeper.update()
+            while i >= 0:
+                if self.enemies[i].is_alive:
+                    self.enemies[i].calculate_movement()
+                else:
+                    self.enemies.pop(i)
+                i -= 1
 
-        mario.check_falling(platforms)
+            enemy2.update()
+            enemy3.update()
+
+            for platform in platforms:
+                mario.push_back(platform)
+                for enemy in self.enemies:
+                    enemy.push_back(platform)
+
+            for enemy in self.enemies:
+                collision, other_enemy = enemy.check_enemy_collision(
+                    self.enemies)
+                if collision:
+                    enemy.reverse()
+                    other_enemy.reverse()
+
+                enemy.update()  # Move normally
+            mario.update()
+
+            mario.check_falling(platforms)
 
     def draw(self):
         for platform in platforms:
             platform.draw()
         for pipe in pipes:
             pipe.draw()
+        for enemy in self.enemies:
+            enemy.draw()
         mario.draw()
-        shellcreeper.draw()
         enemy2.draw()
         enemy3.draw()

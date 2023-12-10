@@ -13,7 +13,6 @@ class Character:
         self.w = w
         self.h = h
         self.sprite = sprite
-
         self.terminal_velocity = terminal_velocity
         self.is_falling = False
 
@@ -129,6 +128,19 @@ class Character:
         else:
             self.__sprite = sprite
 
+    def check_collision(self, other):
+
+        x_overlap = (self.x + self.dx + self.w >
+                     other.x and self.x + self.dx < other.x)
+        y_overlap = not (self.y + self.h + self.dy <=
+                         other.y or self.y + self.dy >= other.y + other.h)
+
+        print(x_overlap, y_overlap)
+        if x_overlap and y_overlap:
+            return True
+
+        return False
+
     @staticmethod
     def detect_collision(self, object):
         '''Returns if a character is collding with a platform, which direction is the collision.'''
@@ -192,9 +204,7 @@ class Character:
         '''Push a character back to the platform it is colliding with.'''
         collision, direction = self.detect_collision(self, platform)
         if collision:
-            print("collison with", platform)
             if direction == "horizontal":
-                print("pushing horizontally")
                 sign = -1 if self.dx > 0 else 1
                 while collision:
                     self.dx += sign
@@ -209,7 +219,6 @@ class Character:
                     self.dy += sign
                     collision, direction = self.detect_collision(
                         self, platform)
-                    print(collision, direction, platform)
         # else:
         #     self.is_falling = True
 
