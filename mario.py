@@ -43,6 +43,8 @@ class Mario(Character):
             self.fall()
 
     def update(self):
+        self.frame_count += 1
+        self.update_animation()
         '''Update values for the Mario object according to dx and dy and the current position of the character.'''
         print("Update:", self.is_falling, self.x, self.y, self.dx, self.dy)
         self.x += self.dx
@@ -57,6 +59,7 @@ class Mario(Character):
         if self.is_jumping or self.is_falling:
             return
         self.dy = jump_strength
+
         self.is_falling = True
 
     def fall(self):
@@ -88,10 +91,8 @@ class Mario(Character):
 
     def draw(self):
 
-        if self.is_jumping:
-            pyxel.blt(self.x, self.y, self.sprite, self.u,
-                      self.v, self.w, self.h, colkey=0)
-        elif self.is_running or (self.is_falling and not self.is_running):
+
+        if self.is_running :
             frame_duration = 0.1
             frame_index = int((self.frame_count / 60) /
                               frame_duration) % len(self.running_sprites)
@@ -103,6 +104,9 @@ class Mario(Character):
                 # Use left-facing sprites and flip horizontally
                 pyxel.blt(self.x, self.y, self.sprite, self.running_sprites[frame_index], self.v, self.w, self.h,
                           colkey=0)
+        elif self.is_falling:
+            pyxel.blt(self.x, self.y, self.sprite, 64,
+                      self.v, self.w, self.h, colkey=0)
         else:
             frame_duration = 0.1  # Time in seconds for each frame
             # Assuming 3 frames for each direction
