@@ -25,10 +25,9 @@ class Board:
 
         self.shellcreepers = []
 
-        global mario
-        mario = Mario()
-        mario.x = 10
-        mario.y = 90
+        self.mario = Mario()
+        self.mario.x = 10
+        self.mario.y = 90
 
         global enemy2
         enemy2 = Enemy2()
@@ -73,10 +72,17 @@ class Board:
                 self.enemies.append(new_shellcreeper)
             self.shellcreeper_spawn_delay = 300  # Reset counter
 
+    def check_enemies(self, enemy_n):
+        enemy1 = self.enemies[enemy_n]
+        for enemy2 in self.enemies[enemy_n + 1:]:
+            if enemy1.check_collision(enemy2):
+                enemy1.reverse()
+                enemy2.reverse()
+
     def update(self):
         if self.stage == 1:
             self.spawn_shellcreepers()
-            mario.calculate_movement()
+            self.mario.calculate_movement()
 
             i = len(self.enemies) - 1
 
@@ -91,21 +97,23 @@ class Board:
             enemy3.update()
 
             for platform in platforms:
-                mario.push_back(platform)
+                self.mario.push_back(platform)
                 for enemy in self.enemies:
                     enemy.push_back(platform)
 
             for enemy in self.enemies:
-                collision, other_enemy = enemy.check_enemy_collision(
-                    self.enemies)
-                if collision:
-                    enemy.reverse()
-                    other_enemy.reverse()
+                if self.mario.check_collision(enemy):
+                    self.mario.die()
 
+            if len(self.enemies) > 1:
+                for i in range(len(self.enemies)):
+                    self.check_enemies(i)
+
+            for enemy in self.enemies:
                 enemy.update()  # Move normally
-            mario.update()
+            self.mario.update()
 
-            mario.check_falling(platforms)
+            self.mario.check_falling(platforms)
 
     def draw(self):
         for platform in platforms:
@@ -114,6 +122,6 @@ class Board:
             pipe.draw()
         for enemy in self.enemies:
             enemy.draw()
-        mario.draw()
+        self.mario.draw()
         enemy2.draw()
         enemy3.draw()

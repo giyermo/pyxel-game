@@ -24,6 +24,8 @@ class Mario(Character):
     def calculate_movement(self):
         '''Calculate the differential of x and y according to how much Mario is going to move in each axis'''
         if self.is_dead:
+            self.dx = 0
+            self.dy = 0
             return
         if pyxel.btn(pyxel.KEY_LEFT):
             self.dx = -2
@@ -52,6 +54,9 @@ class Mario(Character):
             self.x = 0
         # min(self.y + self.dy, pyxel.height - 2*td - self.h)
         self.y = self.y + self.dy
+
+    def die(self):
+        self.is_dead = True
 
     def jump(self):
         '''Makes mario jump according to the jump strength.'''
@@ -90,7 +95,10 @@ class Mario(Character):
 
     def draw(self):
 
-        if self.is_running:
+        if self.is_dead:
+            pyxel.blt(self.x, self.y, self.sprite, 96,
+                      self.v, self.w, self.h, colkey=0)
+        elif self.is_running:
             frame_duration = 0.1
             frame_index = int((self.frame_count / 60) /
                               frame_duration) % len(self.running_sprites)

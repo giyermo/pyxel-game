@@ -129,9 +129,15 @@ class Character:
             self.__sprite = sprite
 
     def check_collision(self, other):
+        self_left = self.x + self.dx
+        self_right = self.x + self.dx + abs(self.w)
 
-        x_overlap = (self.x + self.dx + self.w >
-                     other.x and self.x + self.dx < other.x)
+        other_left = other.x + other.dx
+        other_right = other.x + other.dx + abs(other.w)
+
+        x_overlap = (self_left < other_left and self_right > other_left) or (
+            self_left < other_right and self_right > other_right) or (
+                self_left >= other_left and self_right <= other_right)
         y_overlap = not (self.y + self.h + self.dy <=
                          other.y or self.y + self.dy >= other.y + other.h)
 
