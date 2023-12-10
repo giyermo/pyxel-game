@@ -1,6 +1,6 @@
 import pyxel
 from mario import Mario
-from enemy1 import Enemy
+from shellcreeper import Shellcreeper
 from enemy2 import Enemy2
 from enemy3 import Enemy3
 from pipe import Pipe
@@ -20,8 +20,8 @@ class Board:
         mario.x = 10
         mario.y = 90
 
-        global enemy
-        enemy = Enemy()
+        global shellcreeper
+        shellcreeper = Shellcreeper()
 
         global enemy2
         enemy2 = Enemy2()
@@ -55,18 +55,18 @@ class Board:
 
     def update(self):
         mario.calculate_movement()
-        enemy.update()
+        shellcreeper.calculate_movement()
         enemy2.update()
         enemy3.update()
 
         for platform in platforms:
             mario.push_back(platform)
+            shellcreeper.push_back(platform)
 
         mario.update()
+        shellcreeper.update()
 
         mario.check_falling(platforms)
-
-        print("Falling: ", mario.is_falling)
 
     def draw(self):
         for platform in platforms:
@@ -74,6 +74,6 @@ class Board:
         for pipe in pipes:
             pipe.draw()
         mario.draw()
-        enemy.draw()
+        shellcreeper.draw()
         enemy2.draw()
         enemy3.draw()

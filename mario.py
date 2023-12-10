@@ -4,12 +4,11 @@ from character import Character
 
 td = 8  # tile dimension
 jump_strength = -16
-terminal_velocity = 3
 
 
 class Mario(Character):
     def __init__(self) -> None:
-        super().__init__(x=120, y=184, u=0, v=0, w=16, h=24, sprite=0)
+        super().__init__(x=120, y=184, u=0, v=0, w=16, h=24, terminal_velocity=3, sprite=0)
         self.dx = 0
         self.dy = 0
         self.direction = 1
@@ -43,10 +42,9 @@ class Mario(Character):
             self.fall()
 
     def update(self):
+        '''Update values for the Mario object according to dx and dy and the current position of the character.'''
         self.frame_count += 1
         self.update_animation()
-        '''Update values for the Mario object according to dx and dy and the current position of the character.'''
-        print("Update:", self.is_falling, self.x, self.y, self.dx, self.dy)
         self.x += self.dx
         if self.x <= 0:
             self.x = pyxel.width - abs(self.w)
@@ -67,7 +65,7 @@ class Mario(Character):
         '''Pushes down mario if he is in the air quicker each time until it reaches a terminal velocity.'''
         self.is_jumping = False
         self.dy += 2
-        self.dy = min(self.dy, terminal_velocity)
+        self.dy = min(self.dy, self.terminal_velocity)
 
     def update_animation(self):
         # Function to create the different mario animations , this function is put in the update function

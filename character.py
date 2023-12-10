@@ -5,7 +5,7 @@ td = 8  # tile dimension
 
 
 class Character:
-    def __init__(self, x, y, u, v, w, h, sprite=0):
+    def __init__(self, x, y, u, v, w, h, terminal_velocity=3, sprite=0):
         self.x = x
         self.y = y
         self.u = u
@@ -14,6 +14,7 @@ class Character:
         self.h = h
         self.sprite = sprite
 
+        self.terminal_velocity = terminal_velocity
         self.is_falling = False
 
     def __str__(self) -> str:
@@ -142,12 +143,13 @@ class Character:
             # not to the side of it
             return (False, "No collision")
         if abs(self.dy) >= abs(self.dx):
+            # if the character is moving more vertically, the collision should be vertical
             return (True, "vertical")
         else:
             return (True, "horizontal")
+
         # if self.x + self.w < object.x or self.x > object.x + object.length:
             # self was outside the platform
-
         # if self.x + self.w + self.dx < object.x or self.x > object.x + object.length:  # not under or over it
         #     return (False, "No collision")
         # elif (self.x + self.w + self.dx > object.x and self.x + self.dx < object.x) or (self.x + self.w + self.dx > object.x + object.length and self.x + self.dx < object.x + object.length):  # between borders
