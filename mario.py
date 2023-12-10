@@ -4,7 +4,7 @@ from character import Character
 
 td = 8  # tile dimension
 jump_strength = -16
-terminal_velocity = 5
+terminal_velocity = 3
 
 
 class Mario(Character):
@@ -92,8 +92,7 @@ class Mario(Character):
 
     def draw(self):
 
-
-        if self.is_running :
+        if self.is_running:
             frame_duration = 0.1
             frame_index = int((self.frame_count / 60) /
                               frame_duration) % len(self.running_sprites)
