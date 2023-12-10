@@ -49,7 +49,7 @@ class Mario(Character):
         print("Update:", self.is_falling, self.x, self.y, self.dx, self.dy)
         self.x += self.dx
         if self.x <= 0:
-            self.x = pyxel.width - self.w
+            self.x = pyxel.width - abs(self.w)
         elif self.x + self.w > pyxel.width:
             self.x = 0
         # min(self.y + self.dy, pyxel.height - 2*td - self.h)

@@ -132,19 +132,13 @@ class Character:
     def detect_collision(self, object):
         '''Returns if a character is collding with a platform, which direction is the collision.'''
         if self.y + self.h + self.dy < object.y or self.y + self.dy > object.y + td:
-            print(
-                f"ni por encima ni por debajo de {object}, while being {self}, {self.dy}")
             # not under or over it
             return (False, "No collision")
         # or self.x + self.dx > object.x + object.length:
         if self.x + abs(self.w) + self.dx < object.x:
-            print(
-                f"a la izquierda de {object}, while being {self}, {self.dx}")
             # not to the side of it
             return (False, "No collision")
         if self.x > object.x + object.length:
-            print(
-                f"a la derecha de {object}, while being {self}, {self.dx}")
             # not to the side of it
             return (False, "No collision")
         if abs(self.dy) >= abs(self.dx):
@@ -174,7 +168,7 @@ class Character:
     def on_platform(self, platform):
         '''Returns if a character is on a platform.'''
         if self.y + self.h + self.dy == platform.y - 1:
-            if self.x + self.w + self.dx < platform.x or self.x > platform.x + platform.length:
+            if self.x + abs(self.w) + self.dx < platform.x or self.x > platform.x + platform.length:
                 return False
             else:
                 return True
