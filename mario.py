@@ -64,8 +64,6 @@ class Mario(Character):
         self.is_jumping = False
         self.dy += 2
         self.dy = min(self.dy, terminal_velocity)
-        if self.y + self.dy >= pyxel.height - 2*td - self.h:
-            self.is_falling = False
 
     def update_animation(self):
         # Function to create the different mario animations , this function is put in the update function

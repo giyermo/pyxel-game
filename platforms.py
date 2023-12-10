@@ -55,8 +55,8 @@ class Platform:
     def type(self, type):
         if isinstance(type, int) is False:
             raise TypeError("type must be an int")
-        elif type not in range(1, 6):
-            raise ValueError("type must be between 1-5")
+        elif type not in range(0, 6):
+            raise ValueError("type must be between 0-5")
         else:
             self.__type = type
 
@@ -73,23 +73,26 @@ class Platform:
         pass
 
     def draw(self):
-        if self.type == 1:
-            for i in range(self.length//8):
+        if self.type == 0:
+            for i in range(pyxel.width//td):
+                pyxel.blt(self.x + i * 2*td, self.y, 0, 120, 176, 16, 16, 0)
+        elif self.type == 1:
+            for i in range(self.length//td):
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 224, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 2:
-            for i in range(self.length):
+            for i in range(self.length//td):
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 8, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 3:
-            for i in range(self.length):
+            for i in range(self.length//td):
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 16, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 4:
-            for i in range(self.length):
+            for i in range(self.length//td):
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 24, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
         else:
-            for i in range(self.length):
+            for i in range(self.length//td):
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 8, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
