@@ -48,7 +48,7 @@ class Mario(Character):
         self.x += self.dx
         if self.x <= 0:
             self.x = pyxel.width - abs(self.w)
-        elif self.x + self.w > pyxel.width:
+        elif self.x + abs(self.w) > pyxel.width:
             self.x = 0
         # min(self.y + self.dy, pyxel.height - 2*td - self.h)
         self.y = self.y + self.dy

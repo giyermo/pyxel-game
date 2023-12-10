@@ -4,7 +4,7 @@ from character import Character
 
 class Shellcreeper(Character):
     def __init__(self) -> None:
-        super().__init__(x=40, y=35, u=0, v=24, w=16, h=16, terminal_velocity=3, sprite=0)
+        super().__init__(x=180, y=135, u=0, v=24, w=16, h=16, terminal_velocity=3, sprite=0)
         self.direction = 1  # Start moving to the right
         self.is_alive = True
         self.dy = 0
@@ -34,9 +34,9 @@ class Shellcreeper(Character):
         print(self.dx)
         if self.frame_count % self.move_interval == 0:
             self.x += self.dx  # Update the x position based on the direction
-        if self.x <= 0:
+        if self.x < 0:
             self.x = pyxel.width - abs(self.w)
-        elif self.x + self.w > pyxel.width:
+        elif self.x + abs(self.w) > pyxel.width:
             self.x = 0
         # min(self.y + self.dy, pyxel.height - 2*td - self.h)
         self.y = self.y + self.dy
