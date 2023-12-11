@@ -21,6 +21,7 @@ class Mario(Character):
         self.invincible_time = 0
         self.frame_count = 0
         self.dying_frame_count = 0
+        # self.stopping_timer = 0
         self.running_sprites = [16, 32, 48]
         self.is_transitioning = False
 
@@ -107,7 +108,6 @@ class Mario(Character):
                 self.u = self.running_sprites[frame_index]
                 self.w = -abs(self.w)
         else:
-            # Reset animation frame count for non-running states
             self.frame_count = 0
 
     def running_animation(self):
@@ -141,10 +141,10 @@ class Mario(Character):
                 self.dying_animation("surprised")
             else:
                 self.dying_animation("dying")
-        elif self.is_running:
-            self.running_animation()
         elif self.is_falling:
             self.falling_animation()
+        elif self.is_running:
+            self.running_animation()
         else:
             frame_duration = 0.1  # Time in seconds for each frame
             # Assuming 3 frames for each direction

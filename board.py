@@ -2,6 +2,7 @@ import pyxel
 import random
 import time
 from mario import Mario
+from coin import Coin
 from shellcreeper import Shellcreeper
 from enemy2 import Enemy2
 from enemy3 import Enemy3
@@ -21,6 +22,7 @@ class Board:
         self.stage_1()
         self.mario = Mario()
         self.angry_timer = 0
+        self.collision_list = []
 
     @staticmethod
     def create_platforms():
@@ -53,6 +55,10 @@ class Board:
         self.shellcreeper_spawn_delay = 100
         self.shellcreepers_spawned = 0
         self.max_shellcreepers = 3
+        self.coins = []
+        self.coin_spawn_delay = 5
+        self.coins_spawned = 0
+        self.max_coins = 3
 
     def spawn_shellcreepers(self):
         self.shellcreeper_spawn_delay -= 1
@@ -67,12 +73,44 @@ class Board:
                 self.enemies.append(new_shellcreeper)
             self.shellcreeper_spawn_delay = 300  # Reset counter
 
+    def spawn_coins(self):
+        self.coin_spawn_delay -= 1
+        if self.coin_spawn_delay <= 0:
+            # Spawn enemy
+            if len(self.coins) < self.max_coins and self.coins_spawned < self.max_coins:  # Check max
+                coin_direction = random.choice([-1, 1])
+                new_coin = Coin(
+                    direction=coin_direction)  # Create new instance
+                self.coins.append(new_coin)  # Add to list
+                self.coins_spawned += 1
+                self.enemies.append(new_coin)
+            self.coin_spawn_delay = 300  # Reset counter
+
+    def is_in_collision_list(self, enemy1, enemy2):
+        for pair in self.collision_list:
+            if pair == (enemy1, enemy2) or pair == (enemy2, enemy1):
+                return True
+
+        return False
+
     def check_enemies(self, enemy_n):
         enemy1 = self.enemies[enemy_n]
         for enemy2 in self.enemies[enemy_n + 1:]:
-            if enemy1.check_collision(enemy2) and not enemy2.is_backwards:
-                enemy1.reverse()
-                enemy2.reverse()
+            if enemy1.check_collision(enemy2):
+                if not self.is_in_collision_list(enemy1, enemy2):
+                    if isinstance(enemy1, Coin):
+                        enemy1.reverse()
+                    else:
+                        enemy2.reverse()
+                self.collision_list.append((enemy1, enemy2))
+            elif enemy1.check_collision(enemy2) and not enemy2.is_backwards:
+                if not self.is_in_collision_list(enemy1, enemy2):
+                    enemy1.reverse()
+                    enemy2.reverse()
+                self.collision_list.append((enemy1, enemy2))
+
+    def empty_collision_list(self):
+        self.collision_list = []
 
     def push_back_mario_with_platforms(self):
         for platform in platforms:
@@ -85,10 +123,17 @@ class Board:
 
     def check_if_mario_dies(self):
         for enemy in self.enemies:
-            if self.mario.check_collision(enemy) and not enemy.is_backwards:
-                self.mario.is_dead = True
-            elif self.mario.check_collision(enemy):
-                self.enemies.remove(enemy)
+            if not isinstance(enemy, Coin):
+                if self.mario.check_collision(enemy) and not enemy.is_backwards:
+                    self.mario.is_dead = True
+                elif self.mario.check_collision(enemy):
+                    self.enemies.remove(enemy)
+
+    def check_if_mario_catches_coin(self):
+        for enemy in self.enemies:
+            if isinstance(enemy, Coin):
+                if self.mario.check_collision(enemy):
+                    enemy.catched = True
 
     def calculate_enemy_movements(self):
         i = len(self.enemies) - 1
@@ -139,15 +184,15 @@ class Board:
                     enemy.is_backwards = True
                 print("+stage")
                 platforms[0].stage += 1
-                print(platforms[0].u)
                 if platforms[0].stage >= 5:
                     del platforms[0]
 
     def turn_enemies_backwards(self):
         for enemy in self.enemies:
-            if enemy.is_backwards:
-                enemy.is_jumping = True
-                enemy.backwards_timer += 1
+            if not isinstance(enemy, Coin):
+                if enemy.is_backwards:
+                    enemy.is_jumping = True
+                    enemy.backwards_timer += 1
 
     def check_collision_between_enemies(self):
         if len(self.enemies) > 1:
@@ -157,9 +202,13 @@ class Board:
     def update_enemies(self):
         for enemy in self.enemies:
             enemy.update()
+            if isinstance(enemy, Coin) and enemy.catched_count >= 75:
+                self.enemies.remove(enemy)
 
     def stage1(self):
         self.spawn_shellcreepers()
+
+        self.spawn_coins()
 
         self.mario.calculate_movement()
 
@@ -172,6 +221,7 @@ class Board:
 
         if not self.mario.is_dead:
             self.check_if_mario_dies()
+            self.check_if_mario_catches_coin()
         else:
             self.mario.dying_frame_count += 1
 
@@ -182,6 +232,8 @@ class Board:
         self.turn_enemies_backwards()
 
         self.check_collision_between_enemies()
+
+        self.empty_collision_list()
 
         self.update_enemies()
 
