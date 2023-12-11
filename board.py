@@ -104,32 +104,41 @@ class Board:
         for enemy in self.enemies:
             enemy.update()
 
+    def stage1(self):
+        self.spawn_shellcreepers()
+
+        self.mario.calculate_movement()
+
+        self.calculate_enemy_movements()
+
+        if not self.mario.is_dead:
+            self.push_back_mario_with_platforms()
+
+        self.push_back_enemies_with_platforms()
+
+        self.check_if_mario_dies()
+
+        self.check_collision_between_enemies()
+
+        self.update_enemies()
+
+        self.mario.update()
+
+        if not self.mario.is_dead:
+            self.mario.check_falling(platforms)
+        elif self.mario.y > pyxel.height * 2 and self.mario.lifes > 0:
+            self.mario.lifes -= 1
+            if self.mario.lifes > 0:
+                self.mario.respawn()
+            else:
+                self.end_game()
+
+    def end_game(self):
+        pyxel.quit()
+
     def update(self):
         if self.stage == 1:
-            self.spawn_shellcreepers()
-
-            self.mario.calculate_movement()
-
-            self.calculate_enemy_movements()
-
-            if not self.mario.is_dead:
-                self.push_back_mario_with_platforms()
-
-            self.push_back_enemies_with_platforms()
-
-            self.check_if_mario_dies()
-
-            self.check_collision_between_enemies()
-
-            self.update_enemies()
-
-            self.mario.update()
-
-            if not self.mario.is_dead:
-                self.mario.check_falling(platforms)
-            elif self.mario.y > pyxel.height * 2 and self.mario.lifes > 0:
-                self.mario.lifes -= 1
-                self.mario.respawn()
+            self.stage1()
 
     def draw(self):
         for platform in platforms:
