@@ -71,8 +71,8 @@ class Shellcreeper(Character):
             self.turn_backwards()
             if self.is_falling:
                 self.dy -= 1
-            if self.is_angry:
-                self.move_interval = 1
+        if self.is_angry:
+            self.move_interval = 2
 
         self.y += self.dy
 

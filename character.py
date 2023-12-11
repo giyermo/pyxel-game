@@ -17,7 +17,7 @@ class Character:
         self.is_falling = False
 
     def __str__(self) -> str:
-        return f"x={self.x} y={self.y} w={self.w} h={self.h}"
+        return f"{id(self)} x={self.x} y={self.y} w={self.w} h={self.h}"
 
     def __repr__(self) -> str:
         return self.__str__()

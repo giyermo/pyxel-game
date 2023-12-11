@@ -1,6 +1,7 @@
 import pyxel
 from board import Board
 # importar enemigos
+td = 8
 WIDTH = 32*td
 HEIGHT = 28*td
 

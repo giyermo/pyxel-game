@@ -21,7 +21,6 @@ class Mario(Character):
         self.invincible_time = 0
         self.frame_count = 0
         self.dying_frame_count = 0
-        # self.stopping_timer = 0
         self.running_sprites = [16, 32, 48]
         self.is_transitioning = False
 
@@ -32,11 +31,11 @@ class Mario(Character):
             self.dy = 0
             return
         if pyxel.btn(pyxel.KEY_LEFT):
-            self.dx = -2
+            self.dx = -1
             self.direction = -1
             self.is_running = True
         elif pyxel.btn(pyxel.KEY_RIGHT):
-            self.dx = 2
+            self.dx = 1
             self.direction = 1
             self.is_running = True
         else:
@@ -63,14 +62,14 @@ class Mario(Character):
 
     def respawn(self):
         self.x = 16*td-4
-        self.y = pyxel.height-6*td
+        self.y = pyxel.height - 6*td
         self.dx = 0
         self.dy = 0
         self.direction = 1
         self.is_jumping = False
         self.is_running = False
         self.is_dead = False
-        self.is_invincible = False
+        self.is_invincible = True
         self.invincible_time = 0
         self.frame_count = 0
         self.dying_frame_count = 0
