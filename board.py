@@ -24,6 +24,8 @@ class Board:
         self.angry_timer = 0
         self.collision_list = []
 
+    # def stage0(self):
+
     @staticmethod
     def create_platforms():
         global platforms
@@ -252,7 +254,9 @@ class Board:
         pyxel.quit()
 
     def update(self):
-        if self.stage == 1:
+        if self.stage == 0:
+            self.stage0()
+        elif self.stage == 1:
             self.stage1()
 
     def draw(self):
