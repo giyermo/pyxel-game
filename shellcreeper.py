@@ -21,6 +21,7 @@ class Shellcreeper(Character):
         self.is_jumping = False
         self.running_sprites = [0, 16, 32]
         self.frame_count = 0
+        self.catched_count = 0
         self.is_angry = False
         # Move every 0.1 seconds (60 frames per second)
         self.move_interval = 3

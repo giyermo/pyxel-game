@@ -5,10 +5,10 @@ td = 8
 
 
 class Pow:
-    def __init__(self, x=(32*td//2 - td), y=(28*td - 9*td), stage=1) -> None:
+    def __init__(self, x=(32*td//2 - td), y=(28*td - 9*td), phase=1) -> None:
         self.x = x
         self.y = y
-        self.stage = stage
+        self.phase = phase
         self.u = 136
         self.v = 176
         self.w = td*2
@@ -23,8 +23,8 @@ class Pow:
         return self.__y
 
     @property
-    def stage(self):
-        return self.__stage
+    def phase(self):
+        return self.__phase
 
     # @property
     # def w(self):
@@ -52,20 +52,20 @@ class Pow:
         else:
             self.__y = y
 
-    @stage.setter
-    def stage(self, stage):
-        if isinstance(stage, int) is False:
-            raise TypeError("stage must be an int")
-        elif stage not in range(1, 6):
-            raise ValueError("stage must be between 1-5")
+    @phase.setter
+    def phase(self, phase):
+        if isinstance(phase, int) is False:
+            raise TypeError("phase must be an int")
+        elif phase not in range(1, 6):
+            raise ValueError("phase must be between 1-5")
         else:
-            self.__stage = stage
+            self.__phase = phase
 
     def choose_sprite(self):
-        if self.stage == 2 or self.stage == 3:
+        if self.phase == 2 or self.phase == 3:
             self.u = 152
             self.h = 13
-        if self.stage == 4 or self.stage == 5:
+        if self.phase == 4 or self.phase == 5:
             self.u = 168
             self.h = 9
 

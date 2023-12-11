@@ -17,12 +17,13 @@ td = 8  # tile dimension
 class Board:
     def __init__(self):
         self.phase = 1
+        self.angry_timer = 0
+        self.number_of_enemies = 0
+        self.collision_list = []
         self.create_platforms()
         self.create_pipes()
         self.phase_1()
         self.mario = Mario()
-        self.angry_timer = 0
-        self.collision_list = []
 
     def phase0(self):
         pass
@@ -53,6 +54,7 @@ class Board:
                  Pipe("bottom", "left")]
 
     def phase_1(self):
+        self.number_of_enemies = 3
         self.enemies = []
         self.shellcreepers = []
         self.shellcreeper_spawn_delay = 60
@@ -202,7 +204,7 @@ class Board:
     def update_enemies(self):
         for enemy in self.enemies:
             enemy.update()
-            if isinstance(enemy, Coin) and enemy.catched_count >= 75:
+            if enemy.catched_count >= 75:
                 self.enemies.remove(enemy)
 
     def make_enemies_angry(self):
@@ -211,14 +213,11 @@ class Board:
                 enemy.is_angry = True
 
     def check_if_mario_wins_phase(self):
-        self.angry_timer += 1
-        if self.angry_timer >= 1:
-            enemies = 0
+        if self.number_of_enemies == 0:
             for enemy in self.enemies:
                 if not isinstance(enemy, Coin):
-                    enemies += 1
-
-            return enemies == 0
+                    return False
+            return True
         else:
             return False
 
@@ -256,6 +255,8 @@ class Board:
 
         if self.angry_timer > 30*60:  # seconds if they are angry
             self.make_enemies_angry()
+        else:
+            self.angry_timer += 1
 
         self.update_enemies()
 
@@ -270,7 +271,11 @@ class Board:
             else:
                 self.end_game()
 
-        self.check_if_mario_wins_phase()
+        print(self.number_of_enemies)
+
+        if self.check_if_mario_wins_phase():
+            print("wins")
+            self.phase += 1
 
     def end_game(self):
         pyxel.quit()
