@@ -7,6 +7,7 @@ from enemy2 import Enemy2
 from enemy3 import Enemy3
 from pipe import Pipe
 from platforms import Platform
+from pow import Pow
 
 
 td = 8  # tile dimension
@@ -19,21 +20,23 @@ class Board:
         self.create_pipes()
         self.stage_1()
         self.mario = Mario()
+        self.angry_timer = 0
 
     @staticmethod
     def create_platforms():
         global platforms
         platforms = [
-            Platform(0, pyxel.height-2*td, 0, 33*td),
-            Platform(0, pyxel.height-20*td, 1, 14*td),
+            Pow(),
+            Platform(0, pyxel.height-2*td, 0, 33*td, td * 2),
+            Platform(0, pyxel.height-20*td, 1, 14*td, td),
             Platform(pyxel.width-14*td,
-                     pyxel.height-20*td, 1, 14*td),
-            Platform(0, pyxel.height-13*td, 1, 4*td),
-            Platform(pyxel.width-4*td, pyxel.height-13*td, 1, 4*td),
+                     pyxel.height-20*td, 1, 14*td, td),
+            Platform(0, pyxel.height-13*td, 1, 4*td, td),
+            Platform(pyxel.width-4*td, pyxel.height-13*td, 1, 4*td, td),
             Platform(pyxel.width//2-8*td,
-                     pyxel.height-14*td, 1, 16*td),
-            Platform(0, pyxel.height-8*td, 1, 10*td),
-            Platform(pyxel.width-10*td, pyxel.height-8*td, 1, 10*td)
+                     pyxel.height-14*td, 1, 16*td, td),
+            Platform(0, pyxel.height-8*td, 1, 10*td, td),
+            Platform(pyxel.width-10*td, pyxel.height-8*td, 1, 10*td, td)
         ]
 
     @staticmethod
@@ -67,7 +70,7 @@ class Board:
     def check_enemies(self, enemy_n):
         enemy1 = self.enemies[enemy_n]
         for enemy2 in self.enemies[enemy_n + 1:]:
-            if enemy1.check_collision(enemy2):
+            if enemy1.check_collision(enemy2) and not enemy2.is_backwards:
                 enemy1.reverse()
                 enemy2.reverse()
 
@@ -82,8 +85,10 @@ class Board:
 
     def check_if_mario_dies(self):
         for enemy in self.enemies:
-            if self.mario.check_collision(enemy):
-                self.mario.die()
+            if self.mario.check_collision(enemy) and not enemy.is_backwards:
+                self.mario.is_dead = True
+            elif self.mario.check_collision(enemy):
+                self.enemies.remove(enemy)
 
     def calculate_enemy_movements(self):
         i = len(self.enemies) - 1
@@ -94,6 +99,55 @@ class Board:
             else:
                 self.enemies.pop(i)
             i -= 1
+
+    def check_if_mario_hits_platform_with_enemy(self):
+        if not self.mario.is_invincible:
+            if self.mario.dy < 0:  # mario is going up
+                mario_sprite_top = self.mario.y + self.mario.dy
+                mario_left = self.mario.x + self.mario.dx
+                mario_right = self.mario.x + self.mario.dx + abs(self.mario.w)
+                for enemy in self.enemies:
+                    enemy_left = enemy.x + enemy.dx
+                    enemy_right = enemy.x + enemy.dx + abs(enemy.w)
+                    enemy_bottom = enemy.y + enemy.dy + enemy.h
+                    x_overlap = (mario_left < enemy_left and mario_right > enemy_left) or (
+                        mario_left < enemy_right and mario_right > enemy_right) or (
+                        mario_left >= enemy_left and mario_right <= enemy_right)
+
+                    for platform in platforms:
+                        if enemy.on_platform(platform):
+                            if mario_sprite_top - enemy_bottom < 11 and mario_sprite_top > enemy_bottom:
+                                if x_overlap:
+                                    enemy.is_backwards = True
+
+    def check_if_mario_hits_pow(self):
+        if any(isinstance(x, Pow) for x in platforms):
+            mario_left = self.mario.x + self.mario.dx
+            mario_right = self.mario.x + self.mario.dx + self.mario.w
+            mario_top = self.mario.y
+            pow_left = platforms[0].x
+            pow_right = platforms[0].x + platforms[0].w
+            pow_bottom = platforms[0].y + platforms[0].h
+
+            x_overlap = (mario_left < pow_left and mario_right > pow_left) or (
+                mario_left < pow_right and mario_right > pow_right) or (
+                mario_left >= pow_left and mario_right <= pow_right)
+            y_overlap = mario_top - pow_bottom < 2 and mario_top > pow_bottom
+
+            if x_overlap and y_overlap:
+                for enemy in self.enemies:
+                    enemy.is_backwards = True
+                print("+stage")
+                platforms[0].stage += 1
+                print(platforms[0].u)
+                if platforms[0].stage >= 5:
+                    del platforms[0]
+
+    def turn_enemies_backwards(self):
+        for enemy in self.enemies:
+            if enemy.is_backwards:
+                enemy.is_jumping = True
+                enemy.backwards_timer += 1
 
     def check_collision_between_enemies(self):
         if len(self.enemies) > 1:
@@ -116,7 +170,16 @@ class Board:
 
         self.push_back_enemies_with_platforms()
 
-        self.check_if_mario_dies()
+        if not self.mario.is_dead:
+            self.check_if_mario_dies()
+        else:
+            self.mario.dying_frame_count += 1
+
+        self.check_if_mario_hits_platform_with_enemy()
+
+        self.check_if_mario_hits_pow()
+
+        self.turn_enemies_backwards()
 
         self.check_collision_between_enemies()
 

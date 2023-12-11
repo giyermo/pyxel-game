@@ -15,10 +15,15 @@ class Shellcreeper(Character):
             self.x = pyxel.width - 6*td - abs(self.w)
         self.is_alive = True
         self.dy = 0
-        self.backwards = False
+        self.is_backwards = False
+        self.backwards_timer = 0
+        self.time_backwards = 500
+        self.is_jumping = False
         self.running_sprites = [0, 16, 32]
         self.frame_count = 0
-        self.move_interval = 6  # Move every 0.1 seconds (60 frames per second)
+        self.is_angry = False
+        # Move every 0.1 seconds (60 frames per second)
+        self.move_interval = 3
         self.is_moving = True
 
     def fall(self):
@@ -31,9 +36,6 @@ class Shellcreeper(Character):
         self.dx = self.direction
         self.frame_count += 1  # Counts the frames for the animation to be fluid
         # Check if the enemy has moved off-screen to the right
-
-        if self.is_moving:
-            self.movement()
         if self.is_falling:
             self.fall()
 
@@ -47,11 +49,33 @@ class Shellcreeper(Character):
                 return (True, other)
         return (False, None)
 
+    def jump(self):
+        self.dy = -5
+        self.is_jumping = False
+
+    def turn_backwards(self):
+        if self.is_jumping and self.backwards_timer == 1:
+            self.jump()
+        elif self.backwards_timer < self.time_backwards:
+            self.dx = 0
+        else:
+            self.is_backwards = False
+            self.backwards_timer = 0
+            self.is_angry = True
+
     def update(self):
-        if self.frame_count % self.move_interval == 0:
-            self.x += self.dx  # Update the x position based on the direction
-        # min(self.y + self.dy, pyxel.height - 2*td - self.h)
-        self.y = self.y + self.dy
+        if not self.is_backwards:
+            if self.frame_count % self.move_interval == 0:
+                self.x += self.dx  # Update the x position based on the direction
+        else:
+            self.turn_backwards()
+            if self.is_falling:
+                self.dy -= 1
+            if self.is_angry:
+                self.move_interval = 1
+
+        self.y += self.dy
+
         if self.y + self.h >= pyxel.height - 2*td - 1:
             if self.x + abs(self.w) > pyxel.width - 4 * td:
                 self.x = 6 * td
@@ -64,52 +88,32 @@ class Shellcreeper(Character):
         elif self.x + abs(self.w) > pyxel.width:
             self.x = 1
 
-    def movement(self):
-        # Falta golpe y cuando se enfada pero eso en el update y una funcion nueva
+    def choose_animation(self):
         frame_duration = 0.1
         frame_index = int((self.frame_count / 60) /
                           frame_duration) % len(self.running_sprites)
 
-        self.u = self.running_sprites[frame_index]
         if self.direction > 0:  # Moving right
-            self.w = abs(self.w)  # Ensure width is positive
+            self.w = -abs(self.w)  # Ensure width is negative
         else:  # Moving left
-            # Shift to the next set of sprites for left
-            self.w = -abs(self.w)  # Flip the sprite horizontally
-        # elif self.backwards:
+            self.w = abs(self.w)  # Flip the sprite horizontally
+
+        if not self.is_backwards:
+            self.u = self.running_sprites[frame_index]
+        elif self.backwards_timer > 1 and self.backwards_timer < 30:
+            self.u = 80
+        elif self.backwards_timer >= 30:
+            if frame_index % 2 == 0:
+                self.u = 96
+            else:
+                self.u = 112
+        if not self.is_angry:
+            self.v = 24
+        elif self.is_angry:
+            self.v = 128
 
     def draw(self):
         # Use class attributes to determine the position and appearance
+        self.choose_animation()
         pyxel.blt(self.x, self.y, self.sprite, self.u,
-                  self.v, -self.w, self.h, colkey=0)
-
-    # def hit(self): for mario hitting enemies
-
-
-"""def __init__(self) -> None:
-                        super().__init__(120, 168, 0, 24, 0, 8, 2)
-                        self.direction = -1 # tiene que cambiar dependiendo del lado del que salga, si sale de la izquierda positivo si sale de la derecha negativo
-                        self.dy = self.direction
-                        self.is_alive = True
-                    def update(self):
-                
-                        self.dx = -1
-                
-                        self.dy = min(self.dy + 1, 3)
-                
-                
-                
-                        if self.direction < 0 :and is_wall(self.x - 1, self.y + 4): #cambiar con la condicion de detectar colition
-                            self.direction = 1
-                        elif self.direction > 0  and is_wall(self.x + 8, self.y + 4):
-                            self.direction = -1
-                            self.x, self.y, self.dx, self.dy = push_back(self.x, self.y, self.dx, self.dy)
-                
-                    def draw(self): # cambia dependiendo del enemigo
-                
-                        pyxel.blt(self.x, self.y, self.sprite, self.u, self.v, self.w, self.h, colkey=0)# mañana ajusto cada pixel para esto y hago las demas clases
-                    def draw(self):
-                        # Implement enemy-specific drawing logic here 24  a 32 y 0 a  8
-                        pyxel.blt(self.x, self.y, self.sprite, self.u, self.v, self.w, self.h, colkey=0)"""
-
-# Add any additional methods or properties specific to the enemy
+                  self.v, self.w, self.h, colkey=0)

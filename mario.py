@@ -75,10 +75,6 @@ class Mario(Character):
         self.dying_frame_count = 0
         self.is_transitioning = False
 
-    def die(self):
-        self.is_dead = True
-        self.dying_frame_count += 1
-
     def jump(self):
         '''Makes mario jump according to the jump strength.'''
         if self.is_falling:
