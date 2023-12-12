@@ -128,6 +128,7 @@ class Board:
                 if self.mario.check_collision(enemy) and not enemy.is_backwards:
                     self.mario.is_dead = True
                 elif self.mario.check_collision(enemy):
+                    self.number_of_enemies -= 1
                     self.enemies.remove(enemy)
 
     def check_if_mario_catches_coin(self):
@@ -203,7 +204,11 @@ class Board:
 
     def update_enemies(self):
         for enemy in self.enemies:
-            enemy.update()
+            if enemy.is_alive:
+                enemy.update()
+            else:
+                enemy.catched_count += 1
+                print("ol")
             if enemy.catched_count >= 75:
                 self.enemies.remove(enemy)
 
@@ -271,10 +276,7 @@ class Board:
             else:
                 self.end_game()
 
-        print(self.number_of_enemies)
-
         if self.check_if_mario_wins_phase():
-            print("wins")
             self.phase += 1
 
     def end_game(self):
