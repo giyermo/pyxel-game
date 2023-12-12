@@ -26,7 +26,10 @@ class Board:
         self.mario = Mario()
 
     def phase0(self):
-        pass
+        message = "PRESS ENTER TO START"
+        message_x = (pyxel.width - len(message) * pyxel.FONT_WIDTH) // 2
+        message_y = pyxel.height // 2 - pyxel.FONT_HEIGHT // 2
+        pyxel.text(message_x, message_y, message, pyxel.COLOR_WHITE)
 
     @staticmethod
     def create_platforms():
@@ -53,8 +56,6 @@ class Board:
                  Pipe("bottom", "right"),
                  Pipe("bottom", "left")]
 
-    def start_game (self):
-        self.phase = 1
     def phase_1(self):
         self.number_of_enemies = 3
         self.enemies = []
@@ -286,18 +287,15 @@ class Board:
 
     def update(self):
         if self.phase == 0:
-                if pyxel.btnp(13):  # Im using ASCII because i cannot use the SPACE command
-                    self.start_game()
+            if pyxel.btnp(13):  # Im using ASCII because i cannot use the SPACE command
+                self.phase += 1
 
         elif self.phase == 1:
             self.phase1()
 
     def draw(self):
-        if self.phase == 0 :
-                message = "PRESS ENTER TO START"
-                message_x = (pyxel.width - len(message) * pyxel.FONT_WIDTH) // 2
-                message_y = pyxel.height // 2 - pyxel.FONT_HEIGHT // 2
-                pyxel.text(message_x, message_y, message, pyxel.COLOR_WHITE)
+        if self.phase == 0:
+            self.phase0()
 
         if self.phase == 1:
             for platform in platforms:

@@ -15,6 +15,12 @@ class App:
         pyxel.run(self.update, self.draw)
 
     def update(self):
+        if pyxel.btn(pyxel.KEY_0):
+            self.board.phase = 0
+        elif pyxel.btn(pyxel.KEY_1):
+            self.board.phase = 1
+        elif pyxel.btn(pyxel.KEY_2):
+            self.board.phase = 2
         self.board.update()
 
     def draw(self):
