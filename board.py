@@ -23,7 +23,7 @@ class Board:
         self.phase_1()
         self.mario = Mario()
         self.score_add = 0
-
+        self.catched = 0
     def phase0(self):
         message = "PRESS ENTER TO START"
         message_x = (pyxel.width - len(message) * pyxel.FONT_WIDTH) // 2
@@ -131,6 +131,7 @@ class Board:
                     self.mario.is_dead = True
                 elif self.mario.check_collision(enemy):
                     self.number_of_enemies -= 1
+                    self.score_add += 800
                     self.enemies.remove(enemy)
 
     def check_if_mario_catches_coin(self):
@@ -138,7 +139,14 @@ class Board:
             if isinstance(enemy, Coin):
                 if self.mario.check_collision(enemy):
                     enemy.catched = True
-                    self.score_add += 500
+                    self.score_add += 800/75 + 0.5/75
+
+
+
+
+
+
+
 
     def calculate_enemy_movements(self):
         i = len(self.enemies) - 1
@@ -211,9 +219,23 @@ class Board:
                 enemy.update()
             else:
                 enemy.catched_count += 1
-                print("ol")
+
+
+                print("Enemy caught")
             if enemy.catched_count >= 75:
                 self.enemies.remove(enemy)
+
+    """def update_enemies(self):
+        for enemy in self.enemies:
+            if enemy.is_alive:
+                enemy.update()
+            else:
+                enemy.catched_count += 1
+                self.score_add += 800
+
+                print("ol")
+            if enemy.catched_count >= 75:
+                self.enemies.remove(enemy)"""
 
     def make_enemies_angry(self):
         for enemy in self.enemies:
@@ -229,12 +251,15 @@ class Board:
         else:
             return False
     def interface (self):
+
         for i in range(self.mario.lifes):
             self.cordx = 239 - i * 15
+            score = str(self.score_add )
             pyxel.blt(self.cordx, 5, 0, 0, 0, 16, 12)
-        score = str(int(self.score_add / 75))
+
+        score = str(int(self.score_add))
         pyxel.text(5, 5, "I·", pyxel.COLOR_LIGHT_BLUE)
-        pyxel.text(10, 5, score, pyxel.COLOR_WHITE)
+        pyxel.text(10, 5,   score, pyxel.COLOR_WHITE)
     def phase1(self):
         self.spawn_shellcreepers()
 
@@ -292,6 +317,8 @@ class Board:
         pyxel.quit()
 
     def update(self):
+
+
         if self.phase == 0:
             if pyxel.btnp(13):  # Im using ASCII because i cannot use the SPACE command
                 self.phase += 1
@@ -299,10 +326,11 @@ class Board:
         elif self.phase == 1:
             self.phase1()
 
+
     def draw(self):
 
         if self.phase != 0:
-            self.interface()
+            self.interface() # prints the lifes and the score
         if self.phase == 0:
             self.phase0()
 
