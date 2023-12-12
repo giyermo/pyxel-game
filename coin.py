@@ -90,25 +90,30 @@ class Coin(Character):
         elif self.catched_count < 10:
             u, v = self.catch_sprites[0]
             w, h = 8, 8
+            y = 2
             x = 0
         elif self.catched_count < 20:
             u, v = self.catch_sprites[1]
             w, h = 8, 8
+            y = 4
             x = 0
         elif self.catched_count < 30:
             u, v = self.catch_sprites[2]
             w, h = 8, 8
+            y = 6
             x = 0
         elif self.catched_count < 55:
             u, v = self.adding_money_sprites
             w, h = 16, 16
+            y = 10
             x = 4
         elif self.catched_count < 85:
             u, v = self.dollar_sprite
             w, h = 8, 16
+            y = 14
             x = 1
         else:
-            print("delete this coin")
+            x = 500
 
         return x, y, u, v, w, h
 

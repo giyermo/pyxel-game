@@ -4,7 +4,7 @@ from character import Character
 td = 8
 
 
-class Shellcreeper(Character):
+class Sidestepper(Character):
     def __init__(self, direction=1) -> None:
         super().__init__(x=0, y=4*td, u=0, v=24, w=16, h=16,
                          terminal_velocity=3, sprite=0)  # Start moving to the right
@@ -19,11 +19,13 @@ class Shellcreeper(Character):
         self.backwards_timer = 0
         self.time_backwards = 500
         self.is_jumping = False
-        self.running_sprites = [0, 16, 32]
+        self.running_sprites = (0, 16, 32)
+        self.angry_sprites = (88, 104, 120, 136)
         self.frame_count = 0
         self.catched_count = 0
         self.is_angry = False
         self.very_angry = False
+        self.hitted = 0
         # Move every 0.1 seconds (60 frames per second)
         self.move_interval = 3
         self.is_moving = True
@@ -103,17 +105,17 @@ class Shellcreeper(Character):
 
         if not self.is_backwards:
             self.u = self.running_sprites[frame_index]
-        elif self.backwards_timer > 1 and self.backwards_timer < 30:
-            self.u = 80
-        elif self.backwards_timer >= 30:
+        if self.is_angry or self.very_angry:
+            self.u = self.angry_sprites[frame_index]
+        if self.is_backwards:
             if frame_index % 2 == 0:
-                self.u = 96
+                self.u = 152
             else:
-                self.u = 112
-        if not self.is_angry:
-            self.v = 24
-        elif self.is_angry:
-            self.v = 128
+                self.u = 168
+        if not self.very_angry:
+            self.v = 40
+        else:
+            self.v = 160
 
     def draw(self):
         # Use class attributes to determine the position and appearance

@@ -17,10 +17,13 @@ class App:
     def update(self):
         if pyxel.btn(pyxel.KEY_0):
             self.board.phase = 0
+            self.board.phase_frame_counter = 0
         elif pyxel.btn(pyxel.KEY_1):
             self.board.phase = 1
+            self.board.phase_frame_counter = 0
         elif pyxel.btn(pyxel.KEY_2):
             self.board.phase = 2
+            self.board.phase_frame_counter = 0
         self.board.update()
 
     def draw(self):
