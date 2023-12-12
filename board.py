@@ -4,8 +4,6 @@ import time
 from mario import Mario
 from coin import Coin
 from shellcreeper import Shellcreeper
-from enemy2 import Enemy2
-from enemy3 import Enemy3
 from pipe import Pipe
 from platforms import Platform
 from pow import Pow
