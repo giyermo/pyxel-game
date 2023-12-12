@@ -22,6 +22,7 @@ class Board:
         self.create_pipes()
         self.phase_1()
         self.mario = Mario()
+        self.score_add = 0
 
     def phase0(self):
         message = "PRESS ENTER TO START"
@@ -137,6 +138,7 @@ class Board:
             if isinstance(enemy, Coin):
                 if self.mario.check_collision(enemy):
                     enemy.catched = True
+                    self.score_add += 500
 
     def calculate_enemy_movements(self):
         i = len(self.enemies) - 1
@@ -226,7 +228,13 @@ class Board:
             return True
         else:
             return False
-
+    def interface (self):
+        for i in range(self.mario.lifes):
+            self.cordx = 239 - i * 15
+            pyxel.blt(self.cordx, 5, 0, 0, 0, 16, 12)
+        score = str(int(self.score_add / 75))
+        pyxel.text(5, 5, "I·", pyxel.COLOR_LIGHT_BLUE)
+        pyxel.text(10, 5, score, pyxel.COLOR_WHITE)
     def phase1(self):
         self.spawn_shellcreepers()
 
@@ -292,6 +300,9 @@ class Board:
             self.phase1()
 
     def draw(self):
+
+        if self.phase != 0:
+            self.interface()
         if self.phase == 0:
             self.phase0()
 
