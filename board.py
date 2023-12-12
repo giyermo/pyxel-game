@@ -328,22 +328,28 @@ class Board:
                 pyxel.quit()
 
         if self.check_if_mario_wins_phase():
-
             self.phase_2()
             self.phase += 1
 
     def phase2(self):
-
         if self.phase_frame_counter == 1*60:
             self.spawn_shellcreeper()
-        elif self.phase_frame_counter == 6*60:
+        elif self.phase_frame_counter == 4*60:
             self.spawn_shellcreeper()
-        elif self.phase_frame_counter == 11*60:
+        elif self.phase_frame_counter == 9*60:
+            self.spawn_shellcreeper()
+        elif self.phase_frame_counter == 14*60:
+            self.spawn_shellcreeper()
+        elif self.phase_frame_counter == 20*60:
             self.spawn_shellcreeper()
 
-        if self.phase_frame_counter == 12*60:
+        if self.phase_frame_counter == 14*60:
             self.spawn_coin()
-        elif self.phase_frame_counter == 20*60:
+        elif self.phase_frame_counter == 15*60:
+            self.spawn_coin()
+        elif self.phase_frame_counter == 16*60:
+            self.spawn_coin()
+        elif self.phase_frame_counter == 31*60:
             self.spawn_coin()
 
         self.mario.calculate_movement()
@@ -373,10 +379,8 @@ class Board:
 
         self.check_collision_between_enemies()
 
-        if self.angry_timer > 30*60:  # seconds if they are angry
-            self.make_enemies_angry()
-        else:
-            self.angry_timer += 1
+        if self.number_of_enemies == 1:  # seconds if they are angry
+            self.make_enemies_very_angry()
 
         self.update_enemies()
 
@@ -389,7 +393,11 @@ class Board:
             if self.mario.lifes > 0:
                 self.mario.respawn()
             else:
-                self.end_game()
+                pyxel.quit()
+
+        if self.check_if_mario_wins_phase():
+            self.phase_3()
+            self.phase += 1
 
     def update(self):
         self.phase_frame_counter += 1
@@ -405,10 +413,8 @@ class Board:
             if self.phase_frame_counter == 1:
                 self.phase_2()
             self.phase2()
-
-        elif self.phase == 2:
-
-            self.phase2()
+        elif self.phase == 3:
+            self.phase3()
 
     def draw(self):
 
@@ -426,7 +432,8 @@ class Board:
             self.mario.draw()
         elif self.phase == 3:
             for platform in platforms:
-                platform.draw()
+                if isinstance(platform, Platform):
+                    platform.draw()
             for pipe in pipes:
                 pipe.draw()
             for enemy in self.enemies:

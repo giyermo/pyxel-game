@@ -19,12 +19,18 @@ class App:
             self.board.phase = 0
             self.board.phase_frame_counter = 0
         elif pyxel.btn(pyxel.KEY_1):
+            for enemy in self.board.enemies:
+                self.board.enemies.remove(enemy)
             self.board.phase = 1
             self.board.phase_frame_counter = 0
         elif pyxel.btn(pyxel.KEY_2):
+            for enemy in self.board.enemies:
+                self.board.enemies.remove(enemy)
             self.board.phase = 2
             self.board.phase_frame_counter = 0
         elif pyxel.btn(pyxel.KEY_3):
+            for enemy in self.board.enemies:
+                self.board.enemies.remove(enemy)
             self.board.phase = 3
             self.board.phase_frame_counter = 0
         self.board.update()
