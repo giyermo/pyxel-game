@@ -24,6 +24,9 @@ class App:
         elif pyxel.btn(pyxel.KEY_2):
             self.board.phase = 2
             self.board.phase_frame_counter = 0
+        elif pyxel.btn(pyxel.KEY_3):
+            self.board.phase = 3
+            self.board.phase_frame_counter = 0
         self.board.update()
 
     def draw(self):

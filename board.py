@@ -18,7 +18,6 @@ class Board:
         self.phase = 0
         self.phase_frame_counter = 0
         self.angry_timer = 0
-        self.number_of_enemies = 0
         self.collision_list = []
         self.create_platforms()
         self.create_pipes()
@@ -27,17 +26,6 @@ class Board:
         self.mario = Mario()
         self.score = 0
         self.catched = 0
-        #
-        self.number_of_enemies = 3
-        self.enemies = []
-        self.shellcreepers = []
-        self.shellcreeper_spawn_delay = 60
-        self.shellcreepers_spawned = 0
-        self.max_shellcreepers = 3
-        self.coins = []
-        self.coin_spawn_delay = 1000
-        self.coins_spawned = 0
-        self.max_coins = 2
 
     def phase0(self):
         message = "PRESS ENTER TO START"
@@ -74,11 +62,9 @@ class Board:
         self.number_of_enemies = 3
         self.enemies = []
         self.shellcreepers = []
-        self.shellcreeper_spawn_delay = 60
         self.shellcreepers_spawned = 0
         self.max_shellcreepers = 3
         self.coins = []
-        self.coin_spawn_delay = 1000
         self.coins_spawned = 0
         self.max_coins = 2
 
@@ -86,57 +72,45 @@ class Board:
         self.number_of_enemies = 5
         self.enemies = []
         self.shellcreepers = []
-        self.shellcreeper_spawn_delay = 60
         self.shellcreepers_spawned = 0
         self.max_shellcreepers = 5
         self.sidesteppers = []
-        self.sidestepper_spawn_delay = 60
         self.sidesteppers_spawned = 0
         self.max_sidesteppers = 5
         self.coins = []
-        self.coin_spawn_delay = 1000
         self.coins_spawned = 0
         self.max_coins = 3
 
-    def spawn_shellcreepers(self):
-        self.shellcreeper_spawn_delay -= 1
-        if self.shellcreeper_spawn_delay <= 0:
-            # Spawn enemy
-            if len(self.shellcreepers) < self.max_shellcreepers and self.shellcreepers_spawned < self.max_shellcreepers:  # Check max
-                shellcreeper_direction = random.choice([-1, 1])
-                new_shellcreeper = Shellcreeper(
-                    direction=shellcreeper_direction)  # Create new instance
-                self.shellcreepers.append(new_shellcreeper)  # Add to list
-                self.shellcreepers_spawned += 1
-                self.enemies.append(new_shellcreeper)
-            self.shellcreeper_spawn_delay = 240  # Reset counter
+    def spawn_shellcreeper(self):
+        # Spawn enemy
+        if len(self.shellcreepers) < self.max_shellcreepers and self.shellcreepers_spawned < self.max_shellcreepers:  # Check max
+            shellcreeper_direction = random.choice([-1, 1])
+            new_shellcreeper = Shellcreeper(
+                direction=shellcreeper_direction)  # Create new instance
+            self.shellcreepers.append(new_shellcreeper)  # Add to list
+            self.shellcreepers_spawned += 1
+            self.enemies.append(new_shellcreeper)
 
     def spawn_sidesteppers(self):
-        self.sidestepper_spawn_delay -= 1
-        if self.sidestepper_spawn_delay <= 0:
-            # Spawn enemy
-            if len(self.sidesteppers) < self.max_sidesteppers and self.sidesteppers_spawned < self.max_sidesteppers:  # Check max
-                sidestepper_direction = random.choice([-1, 1])
-                new_sidestepper = Sidestepper(
-                    direction=sidestepper_direction)  # Create new instance
-                self.sidesteppers.append(new_sidestepper)  # Add to list
-                self.sidesteppers_spawned += 1
-                self.enemies.append(new_sidestepper)
-            self.sidestepper_spawn_delay = 240  # Reset counter
+        # Spawn enemy
+        if len(self.sidesteppers) < self.max_sidesteppers and self.sidesteppers_spawned < self.max_sidesteppers:  # Check max
+            sidestepper_direction = random.choice([-1, 1])
+            new_sidestepper = Sidestepper(
+                direction=sidestepper_direction)  # Create new instance
+            self.sidesteppers.append(new_sidestepper)  # Add to list
+            self.sidesteppers_spawned += 1
+            self.enemies.append(new_sidestepper)
 
-    def spawn_coins(self):
+    def spawn_coin(self):
         if self.phase == 1 or self.phase == 2:
-            self.coin_spawn_delay -= 1
-            if self.coin_spawn_delay <= 0:
-                # Spawn enemy
-                if len(self.coins) < self.max_coins and self.coins_spawned < self.max_coins:  # Check max
-                    coin_direction = random.choice([-1, 1])
-                    new_coin = Coin(
-                        direction=coin_direction)  # Create new instance
-                    self.coins.append(new_coin)  # Add to list
-                    self.coins_spawned += 1
-                    self.enemies.append(new_coin)
-                self.coin_spawn_delay = 600  # Reset counter
+            # Spawn coin
+            if len(self.coins) < self.max_coins and self.coins_spawned < self.max_coins:  # Check max
+                coin_direction = random.choice([-1, 1])
+                new_coin = Coin(
+                    direction=coin_direction)  # Create new instance
+                self.coins.append(new_coin)  # Add to list
+                self.coins_spawned += 1
+                self.enemies.append(new_coin)
 
     def is_in_collision_list(self, enemy1, enemy2, c_list):
         if ((id(enemy1), id(enemy2)) in c_list) or ((id(enemy2), id(enemy1)) in c_list):
@@ -269,18 +243,6 @@ class Board:
             if enemy.catched_count >= 75:
                 self.enemies.remove(enemy)
 
-    """def update_enemies(self):
-        for enemy in self.enemies:
-            if enemy.is_alive:
-                enemy.update()
-            else:
-                enemy.catched_count += 1
-                self.score += 800
-
-                print("ol")
-            if enemy.catched_count >= 75:
-                self.enemies.remove(enemy)"""
-
     def make_enemies_very_angry(self):
         for enemy in self.enemies:
             if not isinstance(enemy, Coin):
@@ -306,13 +268,21 @@ class Board:
         score_x = 5
         pyxel.text(score_x, 5, "SCORE:", pyxel.COLOR_LIGHT_BLUE)
         pyxel.text(score_x + 25, 5,   score, pyxel.COLOR_WHITE)
-        pyxel.text(120, 5, "STAGE", pyxel.COLOR_LIGHT_BLUE)
-        pyxel.text(141, 5, str(self.phase), pyxel.COLOR_LIGHT_BLUE)
+        pyxel.text(
+            14*td+2, 5, f"PHASE {str(self.phase)}", pyxel.COLOR_LIGHT_BLUE)
 
     def phase1(self):
-        self.spawn_shellcreepers()
+        if self.phase_frame_counter == 4*60:
+            self.spawn_shellcreeper()
+        elif self.phase_frame_counter == 8*60:
+            self.spawn_shellcreeper()
+        elif self.phase_frame_counter == 14*60:
+            self.spawn_shellcreeper()
 
-        self.spawn_coins()
+        if self.phase_frame_counter == 14*60:
+            self.spawn_coin()
+        elif self.phase_frame_counter == 23*60:
+            self.spawn_coin()
 
         self.mario.calculate_movement()
 
@@ -364,9 +334,17 @@ class Board:
 
     def phase2(self):
 
-        self.spawn_shellcreepers()
+        if self.phase_frame_counter == 1*60:
+            self.spawn_shellcreeper()
+        elif self.phase_frame_counter == 6*60:
+            self.spawn_shellcreeper()
+        elif self.phase_frame_counter == 11*60:
+            self.spawn_shellcreeper()
 
-        self.spawn_coins()
+        if self.phase_frame_counter == 12*60:
+            self.spawn_coin()
+        elif self.phase_frame_counter == 20*60:
+            self.spawn_coin()
 
         self.mario.calculate_movement()
 
@@ -413,66 +391,10 @@ class Board:
             else:
                 self.end_game()
 
-        """if self.check_if_mario_wins_phase():
-            self.phase = 3"""
-        # AQUI DEFINIR LAS VARIABLES PARA EL SIGUIENTE PHASE
-
-    def phase2(self):
-        self.spawn_shellcreepers()
-
-        self.spawn_coins()
-
-        self.mario.calculate_movement()
-
-        self.calculate_enemy_movements()
-
-        if not self.mario.is_dead:
-            self.push_back_mario_with_platforms()
-
-        self.push_back_enemies_with_platforms()
-
-        if self.mario.is_invincible:
-            self.mario.invincible_time += 1
-            if self.mario.invincible_time > 180:
-                self.mario.is_invincible = False
-        elif not self.mario.is_dead:
-            self.check_if_mario_dies()
-            self.check_if_mario_catches_coin()
-        else:
-            self.mario.dying_frame_count += 1
-
-        self.check_if_mario_hits_platform_with_enemy()
-
-        self.check_if_mario_hits_pow()
-
-        self.turn_enemies_backwards()
-
-        self.check_collision_between_enemies()
-
-        if self.number_of_enemies == 1:  # seconds if they are angry
-            self.make_enemies_very_angry()
-
-        self.update_enemies()
-
-        self.mario.update()
-
-        if not self.mario.is_dead:
-            self.mario.check_falling(platforms)
-        elif self.mario.y > pyxel.height * 2 and self.mario.lifes > 0:
-            self.mario.lifes -= 1
-            if self.mario.lifes > 0:
-                self.mario.respawn()
-            else:
-                pyxel.quit()
-
-        if self.check_if_mario_wins_phase():
-            self.phase += 1
-            self.phase_frame_counter = 0
-
     def update(self):
         self.phase_frame_counter += 1
         if self.phase == 0:
-            if pyxel.btnp(13):  # Im using ASCII because i cannot use the SPACE command
+            if pyxel.btnp(13):  # ENTER KEY
                 self.phase += 1
                 self.phase_frame_counter = 0
         elif self.phase == 1:
@@ -494,7 +416,7 @@ class Board:
             self.interface()  # prints the lifes and the score
         if self.phase == 0:
             self.phase0()
-        elif self.phase in (1, 2, 3):
+        elif self.phase in (1, 2):
             for platform in platforms:
                 platform.draw()
             for pipe in pipes:
@@ -502,8 +424,7 @@ class Board:
             for enemy in self.enemies:
                 enemy.draw()
             self.mario.draw()
-        elif self.phase == 2:
-
+        elif self.phase == 3:
             for platform in platforms:
                 platform.draw()
             for pipe in pipes:
