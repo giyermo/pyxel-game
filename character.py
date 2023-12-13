@@ -6,6 +6,7 @@ td = 8  # tile dimension
 
 class Character:
     def __init__(self, x, y, u, v, w, h, terminal_velocity=3, sprite=0):
+        """Initialize a Character object."""
         self.x = x
         self.y = y
         self.u = u
@@ -17,46 +18,53 @@ class Character:
         self.is_falling = False
 
     def __str__(self) -> str:
+        """Return a string representation of the Character object."""
         return f"{id(self)} x={self.x} y={self.y} w={self.w} h={self.h}"
 
     def __repr__(self) -> str:
+        """Return a string representation of the Character object."""
         return self.__str__()
 
     @property
     def x(self):
+
         return self.__x
 
     @property
     def y(self):
+
         return self.__y
 
     @property
     def u(self):
+
         return self.__u
 
     @property
     def v(self):
+
         return self.__v
 
     @property
     def w(self):
+
         return self.__w
 
     @property
     def h(self):
+
         return self.__h
 
     @property
     def sprite(self):
+
         return self.__sprite
 
     @x.setter
     def x(self, x):
-
+        """Set the X-coordinate of the character."""
         if type(x) is not int:
             raise TypeError("x must be an integer")
-        # elif x + self.w > pyxel.width:
-        #     self.__x = pyxel.width - self.w
         elif x < 0:
             self.__x = 0
         else:
@@ -64,10 +72,9 @@ class Character:
 
     @y.setter
     def y(self, y):
+        """Set the Y-coordinate of the character."""
         if type(y) is not int:
             raise TypeError("y must be an integer")
-        # elif y + self.h > pyxel.height:
-        #     self.__y = pyxel.height - self.h
         elif y < 0:
             self.__y = 0
         else:
@@ -75,6 +82,7 @@ class Character:
 
     @u.setter
     def u(self, u):
+        """Set the sprite X-coordinate for rendering."""
         if type(u) is not int:
             raise TypeError("u must be an integer")
         elif u > pyxel.width:
@@ -86,6 +94,7 @@ class Character:
 
     @v.setter
     def v(self, v):
+        """Set the sprite Y-coordinate for rendering."""
         if type(v) is not int:
             raise TypeError("v must be an integer")
         elif v > pyxel.height:
@@ -97,6 +106,7 @@ class Character:
 
     @w.setter
     def w(self, w):
+        """Set the width of the character."""
         if type(w) is not int:
             raise TypeError("w must be an integer")
         elif w > pyxel.width:
@@ -108,6 +118,7 @@ class Character:
 
     @h.setter
     def h(self, h):
+        """Set the height of the character."""
         if type(h) is not int:
             raise TypeError("h must be an integer")
         elif h > pyxel.height:
@@ -119,6 +130,7 @@ class Character:
 
     @sprite.setter
     def sprite(self, sprite):
+        """Set the sprite index for rendering."""
         if type(sprite) is not int:
             raise TypeError("sprite must be an integer")
         elif sprite > pyxel.width:
@@ -129,6 +141,14 @@ class Character:
             self.__sprite = sprite
 
     def check_collision(self, other):
+        """Check collision with another character.
+
+        Args:
+            other (Character): Another character object.
+
+        Returns:
+            bool: True if a collision occurred, False otherwise.
+        """
         self_left = self.x + self.dx
         self_right = self.x + self.dx + abs(self.w)
 
@@ -206,6 +226,7 @@ class Character:
                         self, platform)
             return platform, collision, direction
         return None, None, None
+
         # else:
         #     self.is_falling = True
 

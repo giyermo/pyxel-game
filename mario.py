@@ -1,13 +1,17 @@
 import pyxel
 from character import Character
 
-
 td = 8  # tile dimension
 jump_strength = -16
 
 
 class Mario(Character):
     def __init__(self) -> None:
+        """
+        Initialize Mario object.
+
+        Set initial values for various attributes of Mario.
+        """
         super().__init__(x=16*td-4, y=pyxel.height-6*td, u=0, v=0,
                          w=16, h=24, terminal_velocity=3, sprite=0)
         self.dx = 0
@@ -61,6 +65,7 @@ class Mario(Character):
         self.y = self.y + self.dy
 
     def respawn(self):
+        """Respawn Mario at the starting position with initial attributes."""
         self.x = 16*td-4
         self.y = pyxel.height - 6*td
         self.dx = 0
@@ -80,7 +85,6 @@ class Mario(Character):
         if self.is_falling:
             return
         self.dy = jump_strength
-
         self.is_falling = True
 
     def fall(self):
@@ -90,7 +94,8 @@ class Mario(Character):
         self.dy = min(self.dy, self.terminal_velocity)
 
     def update_animation(self):
-        # Function to create the different mario animations , this function is put in the update function
+        """Update Mario's animation based on his state."""
+        # Function to create the different Mario animations, this function is put in the update function
         frame_duration = 0.1
         frame_index = int((self.frame_count / 60) /
                           frame_duration) % len(self.running_sprites)
@@ -110,6 +115,7 @@ class Mario(Character):
             self.frame_count = 0
 
     def running_animation(self):
+        """Draw Mario's running animation."""
         frame_duration = 0.1
         frame_index = int((self.frame_count / 60) /
                           frame_duration) % len(self.running_sprites)
@@ -123,10 +129,12 @@ class Mario(Character):
                       colkey=0)
 
     def falling_animation(self):
+        """Draw Mario's falling animation."""
         pyxel.blt(self.x, self.y, self.sprite, 64,
                   self.v, self.w, self.h, colkey=0)
 
     def dying_animation(self, state):
+        """Draw Mario's dying animation based on state."""
         if state == "surprised":
             pyxel.blt(self.x, self.y, self.sprite, 96,
                       self.v, self.w, self.h, colkey=0)
@@ -135,6 +143,7 @@ class Mario(Character):
                       self.v, self.w, self.h, colkey=0)
 
     def draw(self):
+        """Draw Mario based on his state."""
         if self.is_dead:
             if self.dying_frame_count <= 60:
                 self.dying_animation("surprised")
@@ -152,3 +161,4 @@ class Mario(Character):
             # Use right-facing sprites for static
             pyxel.blt(self.x, self.y, self.sprite, frame_index *
                       8, self.v, self.w, self.h, colkey=0)
+

@@ -1,26 +1,31 @@
 import pyxel
-from character import Character
+from character import Character  # Assuming there's a Character class defined in 'character' module
 
-td = 8
+td = 8  # Tile dimension (assuming it's a constant value)
 
 
 class Sidestepper(Character):
     def __init__(self, direction=1) -> None:
-        super().__init__(x=0, y=4*td, u=0, v=24, w=16, h=16,
-                         terminal_velocity=3, sprite=0)  # Start moving to the right
+        """ Sidestepper object"""
+        super().__init__(x=0, y=4 * td, u=0, v=24, w=16, h=16,
+                         terminal_velocity=3, sprite=0)  # Call superclass constructor
         self.direction = direction
+        # Set initial position based on direction
         if self.direction == 1:
             self.x = 6 * td
         else:
-            self.x = pyxel.width - 6*td - abs(self.w)
+            self.x = pyxel.width - 6 * td - abs(self.w)
+        # Initialize various flags and counters for character state
         self.is_alive = True
         self.dy = 0
         self.is_backwards = False
         self.backwards_timer = 0
         self.time_backwards = 500
         self.is_jumping = False
+        # Sprite indices for different animations
         self.running_sprites = (0, 16, 32)
         self.angry_sprites = (88, 104, 120, 136)
+        # Initialize counters and flags for animations
         self.frame_count = 0
         self.catched_count = 0
         self.is_angry = False
@@ -31,10 +36,12 @@ class Sidestepper(Character):
         self.is_moving = True
 
     def fall(self):
+        """Simulate falling by adjusting the vertical velocity."""
         self.dy += 2
         self.dy = min(self.dy, self.terminal_velocity)
 
     def calculate_movement(self):
+        """Update vertical and horizontal velocities based on character's state."""
         self.dy = min(self.dy + 1, 3)
         self.dx = self.direction
         self.frame_count += 1  # Counts the frames for the animation to be fluid
@@ -43,20 +50,31 @@ class Sidestepper(Character):
             self.fall()
 
     def reverse(self):
+        """Reverse the character's direction and flip its sprite horizontally."""
         self.dx *= -1
         self.direction *= -1  # Flip direction
 
     def check_enemy_collision(self, enemies):
+        """
+        Check for collisions with other characters in the provided list of enemies.
+        """
         for other in enemies:
             if self != other and self.check_collision(other):
                 return (True, other)
         return (False, None)
 
     def jump(self):
+        """Simulate a jump by setting the vertical velocity."""
         self.dy = -5
         self.is_jumping = False
 
     def turn_backwards(self):
+        """
+        Handle turning backwards, including jumping if necessary.
+
+        If jumping and the backwards timer is at its initial value, jump.
+        Otherwise, set horizontal velocity to 0 until the backwards timer reaches limit.
+        """
         if self.is_jumping and self.backwards_timer == 1:
             self.jump()
         elif self.backwards_timer < self.time_backwards:
@@ -67,6 +85,7 @@ class Sidestepper(Character):
             self.is_angry = True
 
     def update(self):
+        """Update the character's position and state."""
         if not self.is_backwards:
             if self.frame_count % self.move_interval == 0:
                 self.x += self.dx  # Update the x position based on the direction
@@ -81,7 +100,8 @@ class Sidestepper(Character):
 
         self.y += self.dy
 
-        if self.y + self.h >= pyxel.height - 2*td - 1:
+        # Wrap around if the character reaches the screen borders
+        if self.y + self.h >= pyxel.height - 2 * td - 1:
             if self.x + abs(self.w) > pyxel.width - 4 * td:
                 self.x = 6 * td
                 self.y = 4 * td
@@ -94,6 +114,7 @@ class Sidestepper(Character):
             self.x = 1
 
     def choose_animation(self):
+        """Select the appropriate animation based on the character's state."""
         frame_duration = 0.1
         frame_index = int((self.frame_count / 60) /
                           frame_duration) % len(self.running_sprites)
@@ -118,7 +139,9 @@ class Sidestepper(Character):
             self.v = 160
 
     def draw(self):
-        # Use class attributes to determine the position and appearance
+        """
+        Draw the character on the screen
+        """
         self.choose_animation()
         pyxel.blt(self.x, self.y, self.sprite, self.u,
                   self.v, self.w, self.h, colkey=0)

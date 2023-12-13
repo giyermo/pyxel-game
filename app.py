@@ -7,6 +7,7 @@ HEIGHT = 28*td
 
 
 class App:
+    '''This class is where the board is loaded , the title and the dimensions of the game are given too'''
     def __init__(self):
         pyxel.init(WIDTH, HEIGHT, title="Mario Bros", fps=60)
         pyxel.load("assets/assets1.pyxres")
@@ -14,7 +15,7 @@ class App:
 
         pyxel.run(self.update, self.draw)
 
-    def update(self):
+    def update(self):  # Some shortcuts to different phases of the game
         if pyxel.btn(pyxel.KEY_0):
             self.board.phase = 0
             self.board.phase_frame_counter = 0
@@ -55,7 +56,7 @@ class App:
             self.board.phase_frame_counter = 0
         self.board.update()
 
-    def draw(self):
+    def draw(self): # Draws the board
         pyxel.cls(0)
         self.board.draw()
 

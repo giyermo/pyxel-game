@@ -95,6 +95,7 @@ class Coin(Character):
             self.x = 1
 
     def choose_animation(self):
+        """Function to vary the animation of the coin"""
         frame_duration = 0.1
         u = 0
         x = 0

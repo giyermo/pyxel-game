@@ -1,11 +1,15 @@
 import pyxel
-from character import Character
+from character import Character  # Assuming the Character class is defined in character module
 
 td = 8
 
-
 class FighterFly(Character):
     def __init__(self, direction=1) -> None:
+        """Initialize the FighterFly object.
+
+        Args:
+            direction (int, optional): The initial direction of movement (1 for right, -1 for left). Defaults to 1.
+        """
         super().__init__(x=0, y=4*td, u=0, v=24, w=16, h=16,
                          terminal_velocity=3, sprite=0)  # Start moving to the right
         self.direction = direction
@@ -31,6 +35,7 @@ class FighterFly(Character):
         self.jump_timer = 0
 
     def calculate_movement(self):
+        """Calculate the movement of the FighterFly."""
         self.dy = min(self.dy + 1, 3)
         self.dx = self.direction
         self.frame_count += 1  # Counts the frames for the animation to be fluid
@@ -38,20 +43,25 @@ class FighterFly(Character):
         self.dy = 0   # Update the x position based on the direction
 
     def reverse(self):
+        """Reverse the direction of the FighterFly."""
         self.dx *= 1
         self.direction *= 1  # Flip direction
 
     def check_enemy_collision(self, enemies):
+        """Check for collisions with other enemies.
+        """
         for other in enemies:
             if self != other and self.check_collision(other):
                 return (True, other)
         return (False, None)
 
     def jump(self):
+        """Make the FighterFly jump."""
         self.dy = -5
         self.is_jumping = False
 
     def turn_backwards(self):
+        """Turn the FighterFly backwards."""
         if self.is_jumping and self.backwards_timer == 1:
             self.jump()
         elif self.backwards_timer < self.time_backwards:
@@ -62,6 +72,7 @@ class FighterFly(Character):
             self.is_angry = True
 
     def update(self):
+        """Update the FighterFly's position and state."""
         if not self.is_backwards:
             if self.is_on_platform == True and self.jump_timer > 200:
                 self.jump_timer = 0
@@ -97,6 +108,7 @@ class FighterFly(Character):
             self.x = 1
 
     def choose_animation(self):
+        """Choose the animation for the FighterFly."""
         frame_duration = 0.1
         frame_index = int((self.frame_count / 60) /
                           frame_duration) % len(self.running_sprites)
@@ -121,8 +133,10 @@ class FighterFly(Character):
             self.v = 24
 
     def draw(self):
+        """Draw the FighterFly on the screen."""
         self.jump_timer += 1
         # Use class attributes to determine the position and appearance
         self.choose_animation()
         pyxel.blt(self.x, self.y, self.sprite, self.u,
                   self.v, self.w, self.h, colkey=0)
+
