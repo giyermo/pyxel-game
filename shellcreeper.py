@@ -19,7 +19,7 @@ class Shellcreeper(Character):
         self.backwards_timer = 0
         self.time_backwards = 500
         self.is_jumping = False
-        self.running_sprites = [0, 16, 32]
+        self.running_sprites = (0, 16, 32)
         self.frame_count = 0
         self.catched_count = 0
         self.is_angry = False
