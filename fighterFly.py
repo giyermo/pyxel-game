@@ -24,8 +24,9 @@ class FighterFly(Character):
         self.catched_count = 0
         self.is_angry = False
         self.very_angry = False
+        self.is_on_platform = False
         # Move every 0.1 seconds (60 frames per second)
-        self.move_interval = 3
+        self.move_interval = 5
         self.is_moving = True
         self.jump_timer = 0
 
@@ -34,10 +35,7 @@ class FighterFly(Character):
         self.dx = self.direction
         self.frame_count += 1  # Counts the frames for the animation to be fluid
         # Check if the enemy has moved off-screen to the right
-        if self.jump_timer >= 60:
-            self.dy = 2
-        else:
-            self.dy = 1
+        self.dy = 0   # Update the x position based on the direction
 
     def reverse(self):
         self.dx *= 1
@@ -50,8 +48,7 @@ class FighterFly(Character):
         return (False, None)
 
     def jump(self):
-        self.dy = -7
-        self.dx = 1 * self.direction
+        self.dy = -5
         self.is_jumping = False
 
     def turn_backwards(self):
@@ -66,8 +63,18 @@ class FighterFly(Character):
 
     def update(self):
         if not self.is_backwards:
-            if self.jump_timer == 30:
-                self.jump()
+            if self.is_on_platform == True and self.jump_timer > 200:
+                self.jump_timer = 0
+            elif self.jump_timer > 100:
+                if self.frame_count % self.move_interval == 0:
+                    self.x += self.dx   # Update the x
+                if self.frame_count % self.move_interval == 0:
+                    self.dy = 1   # Update the x
+            elif self.jump_timer > 60:
+                if self.frame_count % self.move_interval == 0:
+                    self.x += self.dx   # Update the x
+                if self.frame_count % self.move_interval == 0:
+                    self.dy = -1   # Update the x
         else:
             self.turn_backwards()
         if self.very_angry:

@@ -102,11 +102,11 @@ class Board:
         self.max_coins = 3
 
     def phase_5(self):
-        self.number_of_enemies = 8
+        self.number_of_enemies = 9
         self.enemies = []
         self.shellcreepers = []
         self.shellcreepers_spawned = 0
-        self.max_shellcreepers = 2
+        self.max_shellcreepers = 3
         self.sidesteppers = []
         self.sidesteppers_spawned = 0
         self.max_sidesteppers = 6
@@ -115,7 +115,14 @@ class Board:
         self.max_coins = 3
 
     def phase_6(self):
-        pass
+        self.number_of_enemies = 4
+        self.enemies = []
+        self.fighterFlys = []
+        self.fighterFlys_spawned = 0
+        self.max_fighterFlys = 4
+        self.coins = []
+        self.coins_spawned = 0
+        self.max_coins = 3
 
     def spawn_shellcreeper(self):
         # Spawn enemy
@@ -286,6 +293,12 @@ class Board:
 
     def update_enemies(self):
         for enemy in self.enemies:
+            if isinstance(enemy, FighterFly):
+                for platform in platforms:
+                    if enemy.on_platform(platform):
+                        enemy.is_on_platform = True
+                    else:
+                        enemy.is_on_platform = False
             if enemy.is_alive:
                 enemy.update()
             else:
@@ -656,19 +669,13 @@ class Board:
 
     def phase6(self):
         if self.phase_frame_counter == 1*60:
-            self.spawn_sidestepper()
+            self.spawn_fighterFly()
         elif self.phase_frame_counter == 3*60:
-            self.spawn_sidestepper()
+            self.spawn_fighterFly()
         elif self.phase_frame_counter == 18*60:
-            self.spawn_sidestepper()
+            self.spawn_fighterFly()
         elif self.phase_frame_counter == 27*60:
-            self.spawn_sidestepper()
-        elif self.phase_frame_counter == 30*60:
-            self.spawn_sidestepper()
-        elif self.phase_frame_counter == 34*60:
-            self.spawn_sidestepper()
-        elif self.phase_frame_counter == 43*60:
-            self.spawn_sidestepper()
+            self.spawn_fighterFly()
 
         if self.phase_frame_counter == 11*60:
             self.spawn_coin()
