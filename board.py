@@ -421,48 +421,7 @@ class Board:
         elif self.phase_frame_counter == 31*60:
             self.spawn_coin()
 
-        self.mario.calculate_movement()
-
-        self.calculate_enemy_movements()
-
-        if not self.mario.is_dead:
-            self.push_back_mario_with_platforms()
-
-        self.push_back_enemies_with_platforms()
-
-        if self.mario.is_invincible:
-            self.mario.invincible_time += 1
-            if self.mario.invincible_time > 180:
-                self.mario.is_invincible = False
-        elif not self.mario.is_dead:
-            self.check_if_mario_dies()
-            self.check_if_mario_catches_coin()
-        else:
-            self.mario.dying_frame_count += 1
-
-        self.check_if_mario_hits_platform_with_enemy()
-
-        self.check_if_mario_hits_pow()
-
-        self.turn_enemies_backwards()
-
-        self.check_collision_between_enemies()
-
-        if self.number_of_enemies == 1:  # seconds if they are angry
-            self.make_enemies_very_angry()
-
-        self.update_enemies()
-
-        self.mario.update()
-
-        if not self.mario.is_dead:
-            self.mario.check_falling(platforms)
-        elif self.mario.y > pyxel.height * 2 and self.mario.lifes > 0:
-            self.mario.lifes -= 1
-            if self.mario.lifes > 0:
-                self.mario.respawn()
-            else:
-                pyxel.quit()
+        self.shared_phase_functions()
 
         if self.check_if_mario_wins_phase():
             self.phase_3()
@@ -541,48 +500,7 @@ class Board:
         elif self.phase_frame_counter == 34*60:
             self.spawn_coin()
 
-        self.mario.calculate_movement()
-
-        self.calculate_enemy_movements()
-
-        if not self.mario.is_dead:
-            self.push_back_mario_with_platforms()
-
-        self.push_back_enemies_with_platforms()
-
-        if self.mario.is_invincible:
-            self.mario.invincible_time += 1
-            if self.mario.invincible_time > 180:
-                self.mario.is_invincible = False
-        elif not self.mario.is_dead:
-            self.check_if_mario_dies()
-            self.check_if_mario_catches_coin()
-        else:
-            self.mario.dying_frame_count += 1
-
-        self.check_if_mario_hits_platform_with_enemy()
-
-        self.check_if_mario_hits_pow()
-
-        self.turn_enemies_backwards()
-
-        self.check_collision_between_enemies()
-
-        if self.number_of_enemies == 1:  # seconds if they are angry
-            self.make_enemies_very_angry()
-
-        self.update_enemies()
-
-        self.mario.update()
-
-        if not self.mario.is_dead:
-            self.mario.check_falling(platforms)
-        elif self.mario.y > pyxel.height * 2 and self.mario.lifes > 0:
-            self.mario.lifes -= 1
-            if self.mario.lifes > 0:
-                self.mario.respawn()
-            else:
-                pyxel.quit()
+        self.shared_phase_functions()
 
         if self.check_if_mario_wins_phase():
             self.phase_5()
@@ -619,48 +537,7 @@ class Board:
         elif self.phase_frame_counter == 56*60:
             self.spawn_coin()
 
-        self.mario.calculate_movement()
-
-        self.calculate_enemy_movements()
-
-        if not self.mario.is_dead:
-            self.push_back_mario_with_platforms()
-
-        self.push_back_enemies_with_platforms()
-
-        if self.mario.is_invincible:
-            self.mario.invincible_time += 1
-            if self.mario.invincible_time > 180:
-                self.mario.is_invincible = False
-        elif not self.mario.is_dead:
-            self.check_if_mario_dies()
-            self.check_if_mario_catches_coin()
-        else:
-            self.mario.dying_frame_count += 1
-
-        self.check_if_mario_hits_platform_with_enemy()
-
-        self.check_if_mario_hits_pow()
-
-        self.turn_enemies_backwards()
-
-        self.check_collision_between_enemies()
-
-        if self.number_of_enemies == 1:  # seconds if they are angry
-            self.make_enemies_very_angry()
-
-        self.update_enemies()
-
-        self.mario.update()
-
-        if not self.mario.is_dead:
-            self.mario.check_falling(platforms)
-        elif self.mario.y > pyxel.height * 2 and self.mario.lifes > 0:
-            self.mario.lifes -= 1
-            if self.mario.lifes > 0:
-                self.mario.respawn()
-            else:
-                pyxel.quit()
+        self.shared_phase_functions()
 
         if self.check_if_mario_wins_phase():
             self.phase_6()
@@ -686,6 +563,14 @@ class Board:
         elif self.phase_frame_counter == 56*60:
             self.spawn_coin()
 
+        self.shared_phase_functions()
+
+        if self.check_if_mario_wins_phase():
+            self.phase_6()
+            self.phase += 1
+            self.phase_frame_counter = 0
+
+    def shared_phase_functions(self):
         self.mario.calculate_movement()
 
         self.calculate_enemy_movements()
@@ -728,11 +613,6 @@ class Board:
                 self.mario.respawn()
             else:
                 pyxel.quit()
-
-        if self.check_if_mario_wins_phase():
-            self.phase_6()
-            self.phase += 1
-            self.phase_frame_counter = 0
 
     def update(self):
         self.phase_frame_counter += 1

@@ -23,7 +23,7 @@ class FighterFly(Character):
         self.backwards_timer = 0
         self.time_backwards = 500
         self.is_jumping = False
-        self.running_sprites = [0, 16, 32]
+        self.running_sprites = (0, 16, 32, 48)
         self.frame_count = 0
         self.catched_count = 0
         self.is_angry = False
@@ -124,13 +124,10 @@ class FighterFly(Character):
             self.u = 80
         elif self.backwards_timer >= 30:
             if frame_index % 2 == 0:
-                self.u = 96
+                self.u = 64
             else:
-                self.u = 112
-        if self.is_angry or self.very_angry:
-            self.v = 128
-        else:
-            self.v = 24
+                self.u = 80
+        self.v = 56
 
     def draw(self):
         """Draw the FighterFly on the screen."""
