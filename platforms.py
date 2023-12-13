@@ -91,21 +91,25 @@ class Platform:
             for i in range(pyxel.width//td):
                 pyxel.blt(self.x + i * 2 * td, self.y, 0, 120, 176, 16, 16, 0)
                 self.platform_tile_list.append([self.x + i * 2 * td, self.y])
-        elif self.type == 1:
+        elif self.type == 1:  # normal level
             for i in range(self.w//td):
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 224, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
-        elif self.type == 2:
+        elif self.type == 2:  # coin level
             for i in range(self.w//td):
                 pyxel.blt(self.x + i * td, self.y, 0, 8, 224, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
-        elif self.type == 3:
+        elif self.type == 3:  # sidestepper level
             for i in range(self.w//td):
                 pyxel.blt(self.x + i * td, self.y, 0, 8, 232, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 4:
             for i in range(self.w//td):
                 pyxel.blt(self.x + i * td, self.y, 0, 0, 232, 8, 8, 0)
+                self.platform_tile_list.append([self.x + i * td, self.y])
+        elif self.type == 5:  # fighter fly level
+            for i in range(self.w//td):
+                pyxel.blt(self.x + i * td, self.y, 0, 24, 224, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
         else:
             for i in range(self.w//td):

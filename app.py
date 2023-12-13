@@ -33,6 +33,26 @@ class App:
                 self.board.enemies.remove(enemy)
             self.board.phase = 3
             self.board.phase_frame_counter = 0
+        elif pyxel.btn(pyxel.KEY_4):
+            for enemy in self.board.enemies:
+                self.board.enemies.remove(enemy)
+            self.board.phase = 4
+            self.board.phase_frame_counter = 0
+        elif pyxel.btn(pyxel.KEY_5):
+            for enemy in self.board.enemies:
+                self.board.enemies.remove(enemy)
+            self.board.phase = 5
+            self.board.phase_frame_counter = 0
+        elif pyxel.btn(pyxel.KEY_6):
+            for enemy in self.board.enemies:
+                self.board.enemies.remove(enemy)
+            self.board.phase = 6
+            self.board.phase_frame_counter = 0
+        elif pyxel.btn(pyxel.KEY_7):
+            for enemy in self.board.enemies:
+                self.board.enemies.remove(enemy)
+            self.board.phase = 7
+            self.board.phase_frame_counter = 0
         self.board.update()
 
     def draw(self):
