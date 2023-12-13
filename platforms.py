@@ -97,17 +97,17 @@ class Platform:
                 self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 2:
             for i in range(self.w//td):
-                pyxel.blt(self.x + i * td, self.y, 0, 0, 8, 8, 8, 0)
+                pyxel.blt(self.x + i * td, self.y, 0, 8, 224, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 3:
             for i in range(self.w//td):
-                pyxel.blt(self.x + i * td, self.y, 0, 0, 16, 8, 8, 0)
+                pyxel.blt(self.x + i * td, self.y, 0, 8, 232, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
         elif self.type == 4:
             for i in range(self.w//td):
-                pyxel.blt(self.x + i * td, self.y, 0, 0, 24, 8, 8, 0)
+                pyxel.blt(self.x + i * td, self.y, 0, 0, 232, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])
         else:
             for i in range(self.w//td):
-                pyxel.blt(self.x + i * td, self.y, 0, 0, 8, 8, 8, 0)
+                pyxel.blt(self.x + i * td, self.y, 0, 16, 224, 8, 8, 0)
                 self.platform_tile_list.append([self.x + i * td, self.y])

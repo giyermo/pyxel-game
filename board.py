@@ -1,6 +1,5 @@
 import pyxel
 import random
-import time
 from mario import Mario
 from coin import Coin
 from shellcreeper import Shellcreeper
@@ -21,6 +20,8 @@ class Board:
         self.collision_list = []
         self.create_platforms()
         self.create_pipes()
+        self.phase_4()
+        self.phase_3()
         self.phase_2()
         self.phase_1()
         self.mario = Mario()
@@ -74,6 +75,25 @@ class Board:
         self.shellcreepers = []
         self.shellcreepers_spawned = 0
         self.max_shellcreepers = 5
+        self.coins = []
+        self.coins_spawned = 0
+        self.max_coins = 3
+
+    def phase_3(self):
+        self.seconds_left = 0
+        self.phase3_duration = 20 * 60  # 20 seconds
+        self.number_of_enemies = 10
+        self.enemies = []
+        self.coins = []
+        self.coins_spawned = 0
+        self.max_coins = 10
+
+    def phase_4(self):
+        self.number_of_enemies = 5
+        self.enemies = []
+        self.shellcreepers = []
+        self.shellcreepers_spawned = 0
+        self.max_shellcreepers = 5
         self.sidesteppers = []
         self.sidesteppers_spawned = 0
         self.max_sidesteppers = 5
@@ -101,16 +121,22 @@ class Board:
             self.sidesteppers_spawned += 1
             self.enemies.append(new_sidestepper)
 
-    def spawn_coin(self):
-        if self.phase == 1 or self.phase == 2:
+    def spawn_coin(self, x=6 * td, y=4 * td):
+        if not self.phase == 3:
             # Spawn coin
             if len(self.coins) < self.max_coins and self.coins_spawned < self.max_coins:  # Check max
                 coin_direction = random.choice([-1, 1])
                 new_coin = Coin(
-                    direction=coin_direction)  # Create new instance
+                    direction=coin_direction, x=x, y=y)  # Create new instance
                 self.coins.append(new_coin)  # Add to list
                 self.coins_spawned += 1
                 self.enemies.append(new_coin)
+
+        else:
+            new_coin = Coin(
+                direction=0, x=x, y=y)  # Create new instance
+            self.coins_spawned += 1
+            self.enemies.append(new_coin)
 
     def is_in_collision_list(self, enemy1, enemy2, c_list):
         if ((id(enemy1), id(enemy2)) in c_list) or ((id(enemy2), id(enemy1)) in c_list):
@@ -249,7 +275,10 @@ class Board:
                 enemy.very_angry = True
 
     def check_if_mario_wins_phase(self):
-        if self.number_of_enemies == 0:
+        if self.phase == 3:
+            if len(self.enemies) == 0:
+                return True
+        elif self.number_of_enemies == 0:
             for enemy in self.enemies:
                 if not isinstance(enemy, Coin):
                     return False
@@ -330,6 +359,7 @@ class Board:
         if self.check_if_mario_wins_phase():
             self.phase_2()
             self.phase += 1
+            self.phase_frame_counter = 0
 
     def phase2(self):
         if self.phase_frame_counter == 1*60:
@@ -398,6 +428,61 @@ class Board:
         if self.check_if_mario_wins_phase():
             self.phase_3()
             self.phase += 1
+            self.phase_frame_counter = 0
+
+    def phase3(self):
+        self.seconds_left = (self.phase3_duration -
+                             self.phase_frame_counter) / 60
+        if self.phase_frame_counter == 1:
+            self.spawn_coin(5*td, pyxel.height - 7*td)
+            self.spawn_coin(pyxel.width-6*td, pyxel.height - 7*td)
+            self.spawn_coin(11*td, pyxel.height - 12*td)
+            self.spawn_coin(pyxel.width-12*td, pyxel.height - 12*td)
+            self.spawn_coin(3*td, pyxel.height - 19*td)
+            self.spawn_coin(pyxel.width-4*td, pyxel.height - 19*td)
+            self.spawn_coin(6*td, pyxel.height - 19*td)
+            self.spawn_coin(pyxel.width-7*td, pyxel.height - 19*td)
+            self.spawn_coin(8*td, pyxel.height - 24*td)
+            self.spawn_coin(pyxel.width-9*td, pyxel.height - 24*td)
+
+        self.mario.calculate_movement()
+
+        if not self.mario.is_dead:
+            self.push_back_mario_with_platforms()
+
+        if self.mario.is_invincible:
+            self.mario.invincible_time += 1
+            if self.mario.invincible_time > 180:
+                self.mario.is_invincible = False
+        elif not self.mario.is_dead:
+            self.check_if_mario_dies()
+            self.check_if_mario_catches_coin()
+        else:
+            self.mario.dying_frame_count += 1
+
+        for enemy in self.enemies:
+            enemy.phase3 = True
+
+        self.update_enemies()
+
+        self.mario.update()
+
+        if not self.mario.is_dead:
+            self.mario.check_falling(platforms)
+        elif self.mario.y > pyxel.height * 2 and self.mario.lifes > 0:
+            self.mario.lifes -= 1
+            if self.mario.lifes > 0:
+                self.mario.respawn()
+            else:
+                pyxel.quit()
+
+        if self.seconds_left <= 0 or self.check_if_mario_wins_phase():
+            self.phase_4()
+            self.phase += 1
+            self.phase_frame_counter = 0
+
+    def phase4(self):
+        pass  # haz aqui la fase 4 y pon en phase_4 las varib¡ables que necesitas
 
     def update(self):
         self.phase_frame_counter += 1
@@ -414,15 +499,16 @@ class Board:
                 self.phase_2()
             self.phase2()
         elif self.phase == 3:
+            if self.phase_frame_counter == 1:
+                self.phase_3()
             self.phase3()
 
     def draw(self):
-
         if self.phase != 0:
             self.interface()  # prints the lifes and the score
         if self.phase == 0:
             self.phase0()
-        elif self.phase in (1, 2):
+        elif self.phase in (1, 2, 4):
             for platform in platforms:
                 platform.draw()
             for pipe in pipes:
@@ -431,8 +517,12 @@ class Board:
                 enemy.draw()
             self.mario.draw()
         elif self.phase == 3:
+            pyxel.text(
+                15*td, 15,   "{:.1f}".format(self.seconds_left), pyxel.COLOR_WHITE)  # timer
             for platform in platforms:
                 if isinstance(platform, Platform):
+                    if platform.type != 0:
+                        platform.type = 2
                     platform.draw()
             for pipe in pipes:
                 pipe.draw()

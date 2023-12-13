@@ -6,7 +6,7 @@ td = 8
 
 
 class Coin(Character):
-    def __init__(self, direction=1):
+    def __init__(self, x, y, direction=1):
         super().__init__(x=0, y=4*td, u=0, v=24, w=8, h=16,
                          terminal_velocity=3, sprite=0)
         self.moving_sprites = (
@@ -14,20 +14,39 @@ class Coin(Character):
         self.catch_sprites = ((40, 208), (48, 208), (40, 216))
         self.adding_money_sprites = (56, 208)
         self.dollar_sprite = (72, 208)
+        self.dx = 0
+        self.dy = 0
+        self.phase3 = False
         self.frame_count = 0
         self.catched_count = 0
         self.catched = False
         self.direction = direction
         if self.direction == 1:
             self.x = 6 * td
-        else:
+        elif direction == -1:
             self.x = pyxel.width - 6*td - abs(self.w)
+        else:
+            self.x = x
+
+        self.y = y
 
         self.is_alive = True
 
         self.move_interval = 2
 
         self.dy = 0
+
+    @property
+    def direction(self):
+        return self._direction
+
+    @direction.setter
+    def direction(self, direction):
+        if type(direction) is not int:
+            raise TypeError("Direction must be an integer")
+        if direction not in (1, 0, -1):
+            raise ValueError("Direction must be 1, -1 or 0")
+        self._direction = direction
 
     def fall(self):
         '''Pushes down mario if he is in the air quicker each time until it reaches a terminal velocity.'''
@@ -60,7 +79,8 @@ class Coin(Character):
         else:
             self.catched_count += 1
 
-        self.y += self.dy
+        if self.phase3 == False:
+            self.y += self.dy
 
         if self.y + self.h >= pyxel.height - 2*td - 1:
             if self.x + abs(self.w) > pyxel.width - 4 * td:
