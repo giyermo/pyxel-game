@@ -110,10 +110,10 @@ class Shellcreeper(Character):
                 self.u = 96
             else:
                 self.u = 112
-        if not self.is_angry:
-            self.v = 24
-        elif self.is_angry:
+        if self.is_angry or self.very_angry:
             self.v = 128
+        else:
+            self.v = 24
 
     def draw(self):
         # Use class attributes to determine the position and appearance
